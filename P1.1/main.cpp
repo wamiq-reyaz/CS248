@@ -117,8 +117,8 @@ int main(int argc, char** argv) {
 	matf new_mat(random);
 	cout << "random should be the same matrix as above" << endl;
 	cout << new_mat;
-	cout << "sum with itself" << endl;
-	cout << new_mat + new_mat << endl;
+	cout << "difference with itself" << endl;
+	cout << new_mat - new_mat << endl;
 
 
 
