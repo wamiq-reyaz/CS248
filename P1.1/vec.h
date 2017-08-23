@@ -181,6 +181,9 @@ vec<T> vec<T>::cross(const vec<T>& other) const {
 template<class T>
 const vec<T>& vec<T>::operator+=(const vec<T>& other) {
 	// TODO -- add other to this vector component-wise, store in this vector
+	for(int i = 0; i < 4; i++){
+		m_data[i] += other(i);
+	}
 
 	return *this; // TODO -- why would you return a reference to *this? Be prepared to explain to the TA.
 				  // Standard C++ technique. It means that we now point to our updated self. I think.
@@ -189,7 +192,9 @@ const vec<T>& vec<T>::operator+=(const vec<T>& other) {
 template<class T>
 const vec<T>& vec<T>::operator-=(const vec<T>& other) {
 	// TODO -- subtract other from this vector component-wise, store in this vector
-
+	for(int i = 0; i < 4; i++){
+		m_data[i] -= other(i);
+	}
 	return *this;
 }
 
@@ -220,6 +225,10 @@ template<class S>
 const vec<T>& vec<T>::operator*=(const S& scalar) {
 	// TODO -- replace each component of this with the matching component of this multiplied with the scalar
 	//         Make sure to convert the scalar from S to T
+	scalar = T(scalar);
+	for(int i = 0; i < 4; i++){
+		m_data[i] = m_data[i] * scalar;
+	}
 
 	return *this;
 }
@@ -227,6 +236,7 @@ template<class T>
 template<class S> 
 const vec<T>& vec<T>::operator/=(const S& scalar) {
 	// TODO -- why do we convert scalar and 0 to type T and not compare it as type S? Be prepared to explain to the TA.
+	// WHY
 	assert("vec<T>::operator/= -- invalid argument" && T(scalar) != T(0));
 	// TODO -- replace each component of this with the matching component of this multiplied with the scalar
 	//         Make sure to convert the scalar from S to T
@@ -239,8 +249,12 @@ template<class S>
 vec<T> vec<T>::operator*(const S& scalar) {
 	// TODO -- return a new vector in which each component equals the matching component of this vector times the scalar
 	//		   Make sure to convert the scalar from S to T
+	vec<T> temp;
+	for(int i = 0; i < 4; i++){
+		temp(i) = m_data[i] * T(scalar);
+	}
 
-	return vec<T>(); // replace this line
+	return temp; // replace this line
 }
 
 template<class T>

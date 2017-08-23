@@ -13,7 +13,6 @@ int main(int argc, char** argv) {
 	cout << zero_vector; 	
 	vecf random_vector(88,2,3,4);
 	vecf a(random_vector);
-	cout << random_vector(0) << random_vector(1)<< random_vector(2)<< random_vector(3)<< endl;
 	cout << a(0) << endl;
 
 
@@ -27,5 +26,14 @@ int main(int argc, char** argv) {
 	d = random_vector.dot(unit_vector, 4);
 	cout << "the dot product is " << d << endl;
 
+	// the operator +=
+	random_vector += unit_vector;
+	cout << random_vector << endl;
+
+	// the operator -=
+	random_vector -= unit_vector;
+	random_vector -= unit_vector;
+	random_vector -= unit_vector;
+	cout << random_vector << endl;
 	return 0;	
 }
