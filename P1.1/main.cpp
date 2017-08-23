@@ -36,19 +36,27 @@ int main(int argc, char** argv) {
 	random_vector -= unit_vector;
 	cout << random_vector << endl;
 
+	// operator *
 	vecf new_vector(1,2,4,6);
 	double multiplier = 2.50;
-
 	cout << 6 * new_vector << endl;
+
+	//operator *=
 	new_vector *= 0.5;
 	cout << new_vector << endl;
+
+	//operator +=
 	new_vector += 6;
 	cout << new_vector << endl;
 
+	// operator /=
 	vecd vector_div(2, 4, 8, 16);
 	vector_div /= 2;
 	cout << vector_div << endl;
+	cout << vector_div / 4 << endl;
 
-	cout << vector_div / 2 << endl;
+	// operator /
+	vecd thingy(1,2, 3, 4);
+	cout << thingy / 2 << endl;
 	return 0;	
 }

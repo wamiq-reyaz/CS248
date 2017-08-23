@@ -66,8 +66,8 @@ template<class S, class T>
 vec<T> operator*(const S& scalar, const vec<T>& v) {
 	// TODO -- multiply each component of v with scalar, in a new vector. return new vector
 	vec<T> temp;
-	for(int i = 0; i < 4; i++){
-		temp(i) = T(scalar) * v(i); // Type conversion is necessary
+	for(int ii = 0; ii < 4; ii++){
+		temp(ii) = T(scalar) * v(ii); // Type conversion is necessary
 	}
 
 	return temp; // do not replace this line
@@ -111,8 +111,8 @@ vec<T>::vec(const T& x, const T& y, const T& z, const T& w) {
 template<class T>
 vec<T>::vec(const vec<T>& other) {
 	// TODO -- copy contents of other to this vector
-	for(int i = 0; i < 4; i++){
-		m_data[i] = other.m_data[i];
+	for(int ii = 0; ii < 4; ii++){
+		m_data[ii] = other.m_data[ii];
 	}
 }
 
@@ -133,8 +133,8 @@ T vec<T>::length2(size_t n) const {
 	}
 	else{
 		T l2 = 0;
-		for(int i = 0; i < n; i++){
-			l2 += pow(m_data[i], 2);
+		for(int ii = 0; ii < n; ii++){
+			l2 += pow(m_data[ii], 2);
 		}
 
 	return l2; // do not replace this line
@@ -165,8 +165,8 @@ T vec<T>::dot(const vec<T>& other, size_t n) const {
 	assert("vec<T>::dot() -- invalid argument" && n < 5);
 	// TODO -- compute dot product between this vector and other, first n components only
 	T dot_product = 0;
-	for(int i = 0; i < n; i++){
-		dot_product += (m_data[i] * other(i));
+	for(int ii = 0; ii < n; ii++){
+		dot_product += (m_data[ii] * other(ii));
 	}
 	return dot_product; // replace this line. TODO: why use T(0) instead of 0? Be prepared to explain to the TA.
 }
@@ -181,8 +181,8 @@ vec<T> vec<T>::cross(const vec<T>& other) const {
 template<class T>
 const vec<T>& vec<T>::operator+=(const vec<T>& other) {
 	// TODO -- add other to this vector component-wise, store in this vector
-	for(int i = 0; i < 4; i++){
-		m_data[i] += other(i);
+	for(int ii = 0; ii < 4; ii++){
+		m_data[ii] += other(ii);
 	}
 
 	return *this; // TODO -- why would you return a reference to *this? Be prepared to explain to the TA.
@@ -192,8 +192,8 @@ const vec<T>& vec<T>::operator+=(const vec<T>& other) {
 template<class T>
 const vec<T>& vec<T>::operator-=(const vec<T>& other) {
 	// TODO -- subtract other from this vector component-wise, store in this vector
-	for(int i = 0; i < 4; i++){
-		m_data[i] -= other(i);
+	for(int ii = 0; ii < 4; ii++){
+		m_data[ii] -= other(ii);
 	}
 	return *this;
 }
@@ -225,8 +225,8 @@ template<class S>
 const vec<T>& vec<T>::operator*=(const S& scalar) {
 	// TODO -- replace each component of this with the matching component of this multiplied with the scalar
 	//         Make sure to convert the scalar from S to T
-	for(int i = 0; i < 4; i++){
-		m_data[i] = m_data[i] * T(scalar); // Again, a type conversion
+	for(int ii = 0; ii < 4; ii++){
+		m_data[ii] = m_data[ii] * T(scalar); // Again, a type conversion
 	}
 
 	return *this;
@@ -239,8 +239,8 @@ const vec<T>& vec<T>::operator/=(const S& scalar) {
 	assert("vec<T>::operator/= -- invalid argument" && T(scalar) != T(0));
 	// TODO -- replace each component of this with the matching component of this multiplied with the scalar
 	//         Make sure to convert the scalar from S to T
-	for(int i = 0; i < 4; i++){
-		m_data[i] /= T(scalar);
+	for(int ii = 0; ii < 4; ii++){
+		m_data[ii] /= T(scalar);
 	}
 	return *this;
 }
@@ -251,8 +251,8 @@ vec<T> vec<T>::operator*(const S& scalar) {
 	// TODO -- return a new vector in which each component equals the matching component of this vector times the scalar
 	//		   Make sure to convert the scalar from S to T
 	vec<T> temp;
-	for(int i = 0; i < 4; i++){
-		temp(i) = m_data[i] * T(scalar);
+	for(int ii = 0; ii < 4; ii++){
+		temp(ii) = m_data[ii] * T(scalar);
 	}
 
 	return temp; // replace this line
@@ -264,8 +264,8 @@ vec<T> vec<T>::operator/(const S& scalar) {
 	assert("vec<T>::operator/ -- invalid argument" && T(scalar) != T(0));
 	// TODO -- return a new vector in which each component equals the matching component of this vector divided by the scalar
 	vec<T> temp;
-	for(i = 0; i < 4; i++){
-		temp(i) = m_data[i] / T(scalar);
+	for(int ii = 0; ii < 4; ii++){
+		temp(ii) = m_data[ii] / T(scalar);
 	}
 	return temp; // replace this line
 }
