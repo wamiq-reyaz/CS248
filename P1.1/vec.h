@@ -104,7 +104,6 @@ vec<T>::vec(const T& x, const T& y, const T& z, const T& w) {
 	m_data[1] = y;
 	m_data[2] = z;
 	m_data[3] = w;
-
 }
 
 // Copy constructor
@@ -158,15 +157,15 @@ template<class T>
 void vec<T>::normalize(size_t n) {
 	assert("vec<T>::normalize() -- invalid argument" && n < 5);
 	// TODO -- if length(n)==0, do nothing, otherwise normalize first n components, leave rest intact
-	if(length2(*this) == 0){
-		return // do nothing if length = 0
+	if(this->length2(n) == 0){
+		return; // do nothing if length = 0
 	}
 	else{
 		// find the length of the first n components
-		T length_n = *this->length(n);
-		// divide each of the n componennts by that length
+		T length_n = this->length(n);
+		// divide each of the n components by that length
 		for(int ii = 0; ii < n; ii++){
-			m_data(ii) /= length_n;
+			m_data[ii] /= length_n;
 		}
 
 		return;
@@ -187,8 +186,16 @@ T vec<T>::dot(const vec<T>& other, size_t n) const {
 template<class T>
 vec<T> vec<T>::cross(const vec<T>& other) const {
 	///< TODO -- compute the crossproduct between the first three components of this and other
+	// We implement the cross product and the last element is 0 (by default)
+	T x, y, z; // the components of the cross product
+	T x1, y1, z1;// the components of the first vector
+	T x2, y2, z2; // the components of the second vector
 
-	return vec<T>(); // replace this line
+	x = y1 * z2 - z1 * y2;
+	y = z1 * x2 - x1 * z2;
+	z = x1 * y2 - x2 * y1;
+
+	return vec<T>(x, y, z); // do not replace this line
 }
 
 template<class T>
