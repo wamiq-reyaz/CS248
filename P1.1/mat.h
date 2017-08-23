@@ -77,7 +77,7 @@ std::ostream& operator<<(std::ostream& out, const mat<T>& M) {
 	// TODO: output a matrix row-by-row to the "out" stream
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
-			out << M(ii, jj) << " "; // print a row with space between elements
+			out << M(ii, jj) << "	"; // print a row with space between elements
 		}
 		out << std::endl; // add a newline after each row
 	}
@@ -233,7 +233,11 @@ const mat<T>& mat<T>::operator+=(const mat<T>& other) {
 template<class T>
 const mat<T>& mat<T>::operator-=(const mat<T>& other) {
 	// TODO -- subtract other from this matrix
-
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			(*this)(ii, jj) = (*this)(ii, jj) - other(ii, jj);
+		}
+	}	
 	return *this;
 }
 
@@ -248,8 +252,17 @@ const mat<T>& mat<T>::operator*=(const mat<T>& other) {
 template<class T>
 vec<T> mat<T>::operator*(const vec<T>& v) {
 	// TODO -- compute the matrix-vector product (*this) * v and return the result
+	vec<T> temp;
+	// ii is the iterator for the index of result
+	// jj is the iterator for the running sum
+	for(int ii = 0; ii < 4; ii++){
+		// create a vector from the row ii. Dot product with the RHS vector.
+		// we get the iith element of the result
+		vec<T> row((*this)(ii,0), (*this)(ii,1), (*this)(ii,2), (*this)(ii,3));
+		temp(ii) = row.dot(v);
+	}
 
-	return vec<T>(); // replace this line
+	return temp; // replace this line
 }
 
 template<class T>

@@ -111,17 +111,19 @@ int main(int argc, char** argv) {
 	// matf zeros;
 	// cout << zeros;
 
-	matf random(1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6);
-	cout << random;
+	// matf random(1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6);
+	// cout << random;
 
-	matf new_mat(random);
-	cout << "random should be the same matrix as above" << endl;
-	cout << new_mat;
-	matf something;
-	something.identity();
-	cout << "adding identity" << endl;
-	new_mat += something;
-	cout << new_mat << endl;
+	// matf new_mat(random);
+	// cout << "random should be the same matrix as above" << endl;
+	// cout << new_mat;
+
+	matf a(0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0);
+	vecf ab(1,2,3,4);
+	cout << "mul preserve 1st elem with (1,2,3,4)" << endl;
+	cout << a * ab << endl;
+	
+	
 
 
 
