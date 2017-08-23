@@ -167,7 +167,6 @@ void vec<T>::normalize(size_t n) {
 		for(int ii = 0; ii < n; ii++){
 			m_data[ii] /= length_n;
 		}
-
 		return;
 	}
 }
@@ -187,15 +186,18 @@ template<class T>
 vec<T> vec<T>::cross(const vec<T>& other) const {
 	///< TODO -- compute the crossproduct between the first three components of this and other
 	// We implement the cross product and the last element is 0 (by default)
-	T x, y, z; // the components of the cross product
-	T x1, y1, z1;// the components of the first vector
-	T x2, y2, z2; // the components of the second vector
+	T result[3]; // the components of the cross product
+	T first[3];// the components of the first vector
+	T second[3]; // the components of the second vector
+	for(int ii = 0; ii < 3; ii++){ //keep still. index is 3 because only 3 elements are needed
+		first[ii] = m_data[ii];
+		second[ii] = other(ii);
+	}
+	result[0] = first[1] * second[2] - first[2] * second[1];
+	result[1] = first[2] * second[0] - first[0] * second[2];
+	result[2] = first[0] * second[1] - second[0] * first[1];
 
-	x = y1 * z2 - z1 * y2;
-	y = z1 * x2 - x1 * z2;
-	z = x1 * y2 - x2 * y1;
-
-	return vec<T>(x, y, z); // do not replace this line
+	return vec<T>(result[0], result[1], result[2]); // do not replace this line
 }
 
 template<class T>
@@ -233,8 +235,11 @@ vec<T> vec<T>::operator-(void) const {
 template<class T>
 vec<T> vec<T>::operator+(const vec<T>& other) const {
 	// TODO -- return a new vector in which each component is the sum of the components of this vector and other
-
-	return vec<T>(); // replace this line
+	vec<T> temp;
+	for(int ii = 0; ii < 4; ii++){
+		temp(ii) = -m_data[ii];
+	}
+	return temp; // do not replace this line
 }
 
 template<class T>

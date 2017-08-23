@@ -84,5 +84,12 @@ int main(int argc, char** argv) {
 	ones_f.normalize(3);
 	cout << ones_f << endl;
 
+	// cross product
+	vecf x(1, 0, 0);
+	vecf y(0, 1, 0);
+	cout << "crossing x * y. answer must be (0,0,1)" << endl;
+	cout << x.cross(y) << endl;
+	cout << "y*x" << endl;
+	cout << y.cross(x) << endl;
 	return 0;		
 }
