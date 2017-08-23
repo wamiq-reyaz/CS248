@@ -120,9 +120,8 @@ int main(int argc, char** argv) {
 
 	matf a(0,0,0,0,216,0,0,6,0,0,0,0,36,18,0);
 	cout << a << endl;
-	cout << "div 6 with above mat" << endl;
-	a /= 6;
-	cout << a  << endl;
+	cout << "mul -2 with above mat" << endl;
+	cout << a * -2  << endl;
 
 	return 0;		
 }
