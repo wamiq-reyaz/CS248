@@ -77,5 +77,12 @@ int main(int argc, char** argv) {
 	cout << -negation << endl;
 	return 0;	
 
+	// normalize
+	vecf ones_f(1, 1, 1, 1);
+	vecd ones_d(1, 2, 3, 4)
+
+	cout << "normalizing the first 3 components of (1,1,1,1)" << endl;
+	cout << ones_f.normalize(3) << endl;
+
 	
 }
