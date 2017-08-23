@@ -76,14 +76,18 @@ vec<T> operator*(const S& scalar, const vec<T>& v) {
 template<class T>
 std::ostream& operator<<(std::ostream& out, const vec<T>& v) {
 	// TODO: output a vector component-wise to the "out" stream
-	out << v(0) << " " << v(1) << " " << v(2) << " " << v(3) << std::endl;
+	for(int ii = 0; ii < 4; ii++){
+		out << v(ii) << " ";
+	}
 	return out;
 }
 
 template<class T>
 std::istream& operator>>(std::istream& in, vec<T>& v) {
 	// TODO: read a vector component-wise from the "in" stream
-
+	for(int ii = 0; ii < 4; ii++){
+		in >> v(ii);
+	}
 	return in;
 }
 
@@ -118,6 +122,7 @@ vec<T>::vec(const vec<T>& other) {
 template<class T>
 vec<T>::~vec(void) {
 	// TODO -- is there anything to do here? Be prepared to explain to the TA.
+	// nothing is done on the heap. No cleanup needed
 
 }
 
@@ -355,6 +360,7 @@ const T& vec<T>::operator()(size_t n) const {
 }
 
 // TODO -- what does this method do? Be prepared to explain to the TA.
+// These are casting operators which convert our object to a pointer
 template<class T>
 vec<T>::operator T*(void) {
 	return m_data;

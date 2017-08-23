@@ -1,5 +1,5 @@
 #include"vec.h"
-//#include"mat.h"
+#include"mat.h"
 #include<stdio.h>
 #include<stdlib.h>
 using namespace std;
@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
 	random_vector -= unit_vector;
 	random_vector -= unit_vector;
 	random_vector -= unit_vector;
+	cout << "we print here" << endl;
 	cout << random_vector << endl;
 
 	// operator *
@@ -95,5 +96,15 @@ int main(int argc, char** argv) {
 	// operator +
 	cout << "adding x +y" << endl;
 	cout << x + y << endl;
+
+
+	//operator -
+	cout << "x - y" << endl;
+	cout << x - y << endl;
+
+	// operator >>
+	vecf aaaa;
+	cin >> aaaa;
+	cout << aaaa << "was this what you entered?" << endl;
 	return 0;		
 }
