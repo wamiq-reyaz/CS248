@@ -134,6 +134,11 @@ mat<T>::mat(const T& m00, const T& m01, const T& m02, const T& m03,
 template<class T>
 mat<T>::mat(const mat<T>& other) {
 	// TODO -- copy other to (*this) component by component
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			(*this)(ii, jj) = other(ii, jj);
+		}
+	}
 }
 
 template<class T>

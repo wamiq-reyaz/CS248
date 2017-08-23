@@ -107,11 +107,16 @@ int main(int argc, char** argv) {
 	// //cin >> aaaa;
 	// //cout << aaaa << "was this what you entered?" << endl;
 
-	matf zeros;
-	cout << zeros;
+	// // void constructor
+	// matf zeros;
+	// cout << zeros;
 
 	matf random(1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6);
 	cout << random;
+
+	matf new_mat(random);
+	cout << "random should be the same matrix as above" << endl;
+	cout << new_mat;
 
 	return 0;		
 }
