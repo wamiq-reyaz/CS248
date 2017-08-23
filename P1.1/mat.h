@@ -100,7 +100,7 @@ std::istream& operator>>(std::istream& in, mat<T>& M) {
 template<class T>
 mat<T>::mat(void) {
 	// Arithmetic values are set to zero by default. BUt they usually have
-	// a small value
+	// a small value 
 	for(int ii = 0; ii < 16; ii++){
 		m_data[ii] = T(0);
 	}
@@ -340,6 +340,7 @@ bool mat<T>::operator==(const mat<T>& other) const {
 			}
 		}
 	}	
+	// if every check succeeds
 	return true;
 }
 
