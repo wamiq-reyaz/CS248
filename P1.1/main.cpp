@@ -44,5 +44,9 @@ int main(int argc, char** argv) {
 	cout << new_vector << endl;
 	new_vector += 6;
 	cout << new_vector << endl;
+
+	vecd vector_div(2, 4, 8, 16);
+	vector_div /= 2;
+	cout << vector_div << endl;
 	return 0;	
 }
