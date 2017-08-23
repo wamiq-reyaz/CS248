@@ -158,6 +158,19 @@ template<class T>
 void vec<T>::normalize(size_t n) {
 	assert("vec<T>::normalize() -- invalid argument" && n < 5);
 	// TODO -- if length(n)==0, do nothing, otherwise normalize first n components, leave rest intact
+	if(length2(*this) == 0){
+		return // do nothing if length = 0
+	}
+	else{
+		// find the length of the first n components
+		T length_n = *this->length(n);
+		// divide each of the n componennts by that length
+		for(int ii = 0; ii < n; ii++){
+			m_data(ii) /= length_n;
+		}
+
+		return;
+	}
 }
 
 template<class T>
