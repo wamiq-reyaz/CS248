@@ -281,6 +281,10 @@ template<class S>
 const mat<T>& mat<T>::operator/=(const S& scalar) {
 	assert("mat<T>::operator/= -- invalid argument" && T(scalar) != T(0));
 	// TODO -- divide each matrix component by scalar. Don't forget to convert scalar to type T.
+	for (int ii = 0; ii < 16; ii++) // I am in the class. Im gonna use it
+	{
+		m_data[ii] /= T(scalar);
+	}
 
 	return *this;
 }

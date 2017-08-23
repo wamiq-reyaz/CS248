@@ -118,10 +118,10 @@ int main(int argc, char** argv) {
 	// cout << "random should be the same matrix as above" << endl;
 	// cout << new_mat;
 
-	matf a(0,0,0,0,16,0,0,1,0,0,0,0,0,0,2,0);
+	matf a(0,0,0,0,216,0,0,6,0,0,0,0,36,18,0);
 	cout << a << endl;
-	cout << "mul 6 with above mat" << endl;
-	a *= 6;
+	cout << "div 6 with above mat" << endl;
+	a /= 6;
 	cout << a  << endl;
 
 	return 0;		
