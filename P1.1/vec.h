@@ -283,8 +283,15 @@ const vec<T> vec<T>::operator=(const vec<T>& other) {
 template<class T>
 bool vec<T>::operator==(const vec<T>& other) const {
 	// TODO -- return true if each component of this and other are equal, false otherwise
+	for(int ii = 0; i < 4; i++){
+		if(m_data(i) != other(i)){
+			//return false immediately
+			return false;
+		}
+	}
 
-	return false; // replace this line
+	//otherwise all elements are equal
+	return true; // do not replace this line
 }
 
 template<class T>
