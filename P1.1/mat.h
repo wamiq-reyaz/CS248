@@ -69,7 +69,7 @@ mat<T> operator*(const S& scalar, const vec<T>& M) {
 			temp(ii, jj) = T(scalar) * M(ii, jj);
 		}
 	}
-	return temp; // replace this line
+	return temp; // do not replace this line
 }
 
 template<class T>
@@ -81,7 +81,6 @@ std::ostream& operator<<(std::ostream& out, const mat<T>& M) {
 		}
 		out << std::endl; // add a newline after each row
 	}
-
 	return out;
 }
 
@@ -96,7 +95,8 @@ std::istream& operator>>(std::istream& in, mat<T>& M) {
 
 template<class T>
 mat<T>::mat(void) {
-	// do nothing. Arithmetic values are set to zero by default
+	// Arithmetic values are set to zero by default. BUt they usually have
+	// a small value
 	for(int ii = 0; ii < 16; ii++){
 		m_data[ii] = T(0);
 	}
@@ -109,6 +109,26 @@ mat<T>::mat(const T& m00, const T& m01, const T& m02, const T& m03,
 			const T& m30, const T& m31, const T& m32, const T& m33) {
 	// TODO -- initialize m_data with the provided components.
 	//		!! USE operator() to access the elements of this matrix, e.g., (*this)(i,j) = x
+	// Row 1
+	(*this)(0,0) = m00;
+	(*this)(0,1) = m01;
+	(*this)(0,2) = m02;
+	(*this)(0,3) = m03;
+	// Row 2
+	(*this)(1,0) = m10;
+	(*this)(1,1) = m11;
+	(*this)(1,2) = m12;
+	(*this)(1,3) = m13;
+	// Row 3
+	(*this)(2,0) = m20;
+	(*this)(2,1) = m21;
+	(*this)(2,2) = m22;
+	(*this)(2,3) = m23;
+	// Row 4
+	(*this)(3,0) = m30;
+	(*this)(3,1) = m31;
+	(*this)(3,2) = m32;
+	(*this)(3,3) = m33;
 }
 
 template<class T>
