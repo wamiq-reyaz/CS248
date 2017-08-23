@@ -222,7 +222,11 @@ mat<T> mat<T>::operator-(void) const {
 template<class T>
 const mat<T>& mat<T>::operator+=(const mat<T>& other) {
 	// TODO -- add other to this matrix
-
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			(*this)(ii, jj) = (*this)(ii, jj) + other(ii, jj);
+		}
+	}	
 	return *this;
 }
 

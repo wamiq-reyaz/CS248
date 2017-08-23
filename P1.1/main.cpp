@@ -117,8 +117,11 @@ int main(int argc, char** argv) {
 	matf new_mat(random);
 	cout << "random should be the same matrix as above" << endl;
 	cout << new_mat;
-	cout << "negation" << endl;
-	cout << -new_mat << endl;
+	matf something;
+	something.identity();
+	cout << "adding identity" << endl;
+	new_mat += something;
+	cout << new_mat << endl;
 
 
 
