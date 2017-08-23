@@ -143,11 +143,25 @@ mat<T>::mat(const mat<T>& other) {
 
 template<class T>
 mat<T>::~mat(void) {
+	// nothing to do. Everything allocated on the stack
 }
 
 template<class T>
 void mat<T>::identity(void) {
 	// TODO -- overwrite this matrix with an identity matrix.
+	// Imma do it the simple way. Use two iterators. IF ii==jj
+	// put in a 1
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			T element = 0;
+			if(ii == jj){
+				element = 1;
+			}
+			// Now put in the element
+			(*this)(ii, jj) = element;
+
+		}
+	}
 }
 
 template<class T>
