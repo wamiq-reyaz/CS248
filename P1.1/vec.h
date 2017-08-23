@@ -202,8 +202,12 @@ template<class T>
 vec<T> vec<T>::operator-(void) const {
 	// TODO -- why can't we return a reference, here? Be prepared to explain to the TA.
 	// TODO -- return a new vector in which each component is the negated component from this vector
-
-	return vec<T>(); // replace this line
+	// WHY
+	vec<T> temp;
+	for(int ii = 0; ii < 4; ii++){
+		temp(ii) = -m_data[ii];
+	}
+	return temp; // do not replace this line
 }
 
 template<class T>
@@ -216,8 +220,12 @@ vec<T> vec<T>::operator+(const vec<T>& other) const {
 template<class T>
 vec<T> vec<T>::operator-(const vec<T>& other) const {
 	// TODO -- return a new vector in which each component is the difference between the components of this vector and other
+	vec<T> temp;
+	for(int ii = 0; ii < 4; ii++){
+		temp(ii) = -other(ii);
+	}
 
-	return vec<T>(); // replace this line
+	return temp; // replace this line
 }
 
 template<class T>
@@ -247,6 +255,7 @@ const vec<T>& vec<T>::operator/=(const S& scalar) {
 
 template<class T>
 template<class S> 
+
 vec<T> vec<T>::operator*(const S& scalar) {
 	// TODO -- return a new vector in which each component equals the matching component of this vector times the scalar
 	//		   Make sure to convert the scalar from S to T
@@ -255,7 +264,7 @@ vec<T> vec<T>::operator*(const S& scalar) {
 		temp(ii) = m_data[ii] * T(scalar);
 	}
 
-	return temp; // replace this line
+	return temp; //do not replace this line
 }
 
 template<class T>

@@ -69,7 +69,12 @@ int main(int argc, char** argv) {
 
 	//operator !=
 	cout << "this tests whether zero vector != b (another zero vector)" << endl;
-	cout << (zero_vector != b) << endl;
+	cout << (zero_vector != b) << endl; 
+
+	// operator -
+	cout << "negation of (1, 0, 5, 7)" << endl;
+	vecf negation(1, 0, 5, 7);
+	cout << -negation << endl;
 	return 0;	
 
 	
