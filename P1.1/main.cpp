@@ -120,8 +120,10 @@ int main(int argc, char** argv) {
 
 	matf a(0,0,0,0,216,0,0,6,0,0,0,0,36,18,0);
 	cout << a << endl;
-	cout << "div -2 with above mat" << endl;
-	cout << a / -2  << endl;
+	matf identity;
+	identity.identity();
+	cout << "make above identity" << endl;
+	cout << (a = identity) << endl;
 
 	return 0;		
 }

@@ -318,15 +318,26 @@ mat<T> mat<T>::operator/(const S& scalar) {
 template<class T>
 const mat<T>& mat<T>::operator=(const mat<T>& other) {
 	// TODO -- overwrite each component in this matrix by the matching component in other
-
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			(*this)(ii, jj) = other(ii, jj);
+		}
+	}	
 	return *this;
 }
 
 template<class T>
 bool mat<T>::operator==(const mat<T>& other) const {
 	// TODO -- return true if each component of (*this) is equal to the matching component of other, false otherwise
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			if((*this)(ii, jj) != other(ii, jj)){
+				return false;
+			}
+		}
+	}	
 
-	return false;
+	return true;
 }
 
 template<class T>
