@@ -237,9 +237,10 @@ vec<T> vec<T>::operator+(const vec<T>& other) const {
 	// TODO -- return a new vector in which each component is the sum of the components of this vector and other
 	vec<T> temp;
 	for(int ii = 0; ii < 4; ii++){
-		temp(ii) = -m_data[ii];
+		temp(ii) = m_data[ii] + other(ii);
 	}
-	return temp; // do not replace this line
+
+	return temp; // replace this line
 }
 
 template<class T>
@@ -247,10 +248,10 @@ vec<T> vec<T>::operator-(const vec<T>& other) const {
 	// TODO -- return a new vector in which each component is the difference between the components of this vector and other
 	vec<T> temp;
 	for(int ii = 0; ii < 4; ii++){
-		temp(ii) = -other(ii);
+		temp(ii) = m_data[ii] - other(ii);
 	}
 
-	return temp; // replace this line
+	return temp; // do not replace this line
 }
 
 template<class T>

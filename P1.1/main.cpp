@@ -91,5 +91,9 @@ int main(int argc, char** argv) {
 	cout << x.cross(y) << endl;
 	cout << "y*x" << endl;
 	cout << y.cross(x) << endl;
+
+	// operator +
+	cout << "adding x +y" << endl;
+	cout << x + y << endl;
 	return 0;		
 }
