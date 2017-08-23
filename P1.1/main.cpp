@@ -120,10 +120,11 @@ int main(int argc, char** argv) {
 
 	matf a(0,0,0,0,216,0,0,6,0,0,0,0,36,18,0);
 	cout << a << endl;
+	matf ab;
 	matf identity;
 	identity.identity();
 	cout << "make above identity" << endl;
-	cout << (a = identity) << endl;
+	cout << (a != a) << endl;
 
 	return 0;		
 }

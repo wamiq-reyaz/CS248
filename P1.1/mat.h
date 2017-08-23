@@ -336,15 +336,18 @@ bool mat<T>::operator==(const mat<T>& other) const {
 			}
 		}
 	}	
-
 	return true;
 }
 
 template<class T>
 bool mat<T>::operator!=(const mat<T>& other) const {
 	// TODO -- return false if each component of (*this) is equal to the matching component of other, false otherwise
-
-	return false;
+	if(*this == other){
+		return false;
+	}
+	else{
+		return true;
+	}
 }
 
 template<class T>
