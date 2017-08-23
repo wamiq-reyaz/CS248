@@ -235,11 +235,13 @@ template<class T>
 template<class S> 
 const vec<T>& vec<T>::operator/=(const S& scalar) {
 	// TODO -- why do we convert scalar and 0 to type T and not compare it as type S? Be prepared to explain to the TA.
-	// WHY
+	// WHY To maintain same accuracy levels. Example: int(0) != float(0)
 	assert("vec<T>::operator/= -- invalid argument" && T(scalar) != T(0));
 	// TODO -- replace each component of this with the matching component of this multiplied with the scalar
 	//         Make sure to convert the scalar from S to T
-
+	for(int i = 0; i < 4; i++){
+		m_data[i] /= T(scalar);
+	}
 	return *this;
 }
 
