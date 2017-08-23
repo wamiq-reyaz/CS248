@@ -118,15 +118,11 @@ int main(int argc, char** argv) {
 	// cout << "random should be the same matrix as above" << endl;
 	// cout << new_mat;
 
-	matf a(0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0);
-	vecf ab(1,2,3,4);
-	cout << "mul preserve 1st elem with (1,2,3,4)" << endl;
-	cout << a * ab << endl;
-	
-	
-
-
-
+	matf a(0,0,0,0,16,0,0,1,0,0,0,0,0,0,2,0);
+	cout << a << endl;
+	cout << "mul 6 with above mat" << endl;
+	a *= 6;
+	cout << a  << endl;
 
 	return 0;		
 }
