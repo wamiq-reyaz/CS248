@@ -210,8 +210,13 @@ mat<T> mat<T>::operator*(const mat<T>& other) const {
 template<class T>
 mat<T> mat<T>::operator-(void) const {
 	// TODO -- compute a new matrix -(*this), return the new matrix
-
-	return mat<T>(); // replace this line
+	mat<T> temp;
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			temp(ii, jj) = -(*this)(ii, jj);
+		}
+	}	
+	return temp; // do not replace this line
 }
 
 template<class T>
