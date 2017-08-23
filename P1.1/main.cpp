@@ -58,5 +58,10 @@ int main(int argc, char** argv) {
 	// operator /
 	vecd thingy(1,2, 3, 4);
 	cout << thingy / 2 << endl;
+
+	// operator = 
+	vecd b(0, 0, 0, 0);
+	thingy = b;
+	cout << thingy << endl;
 	return 0;	
 }
