@@ -263,8 +263,11 @@ template<class S>
 vec<T> vec<T>::operator/(const S& scalar) {
 	assert("vec<T>::operator/ -- invalid argument" && T(scalar) != T(0));
 	// TODO -- return a new vector in which each component equals the matching component of this vector divided by the scalar
-
-	return vec<T>(); // replace this line
+	vec<T> temp;
+	for(i = 0; i < 4; i++){
+		temp(i) = m_data[i] / T(scalar);
+	}
+	return temp; // replace this line
 }
 
 template<class T>
