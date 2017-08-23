@@ -306,8 +306,13 @@ template<class S>
 mat<T> mat<T>::operator/(const S& scalar) {
 	assert("mat<T>::operator/ -- invalid argument" && T(scalar) != T(0));
 	// TODO -- divide each matrix component by scalar and store in a new matrix. return the new matrix. Don't forget to convert scalar to type T.
-
-	return mat<T>(); // replace this line
+	mat<T> temp;
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			temp(ii, jj) = (*this)(ii, jj) / T(scalar);
+		}
+	}	
+	return temp; // do not replace this line
 }
 
 template<class T>
