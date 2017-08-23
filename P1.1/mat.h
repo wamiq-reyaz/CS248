@@ -159,7 +159,6 @@ void mat<T>::identity(void) {
 			}
 			// Now put in the element
 			(*this)(ii, jj) = element;
-
 		}
 	}
 }
@@ -167,15 +166,26 @@ void mat<T>::identity(void) {
 template<class T>
 mat<T> mat<T>::transpose(void) const {
 	// TODO -- compute the transpose of this matrix in a new matrix and return.
-	
-	return mat<T>(); // replace this line
+	// interchanging the indices should do the trick
+	mat<T> temp;
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			temp(ii, jj) = (*this)(jj, ii);
+		}
+	}	
+	return temp; // do not replace this line
 }
 
 template<class T>
 mat<T> mat<T>::operator+(const mat<T>& other) const {
 	// TODO -- compute a new matrix (*this)+other, return the new matrix
-
-	return mat<T>(); // replace this line
+	mat<T> temp;
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			temp(ii, jj) = (*this)(ii, jj) + other(ii, jj);
+		}
+	}	
+	return temp; // replace this line
 }
 
 template<class T>
