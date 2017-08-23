@@ -297,8 +297,12 @@ bool vec<T>::operator==(const vec<T>& other) const {
 template<class T>
 bool vec<T>::operator!=(const vec<T>& other) const {
 	// TODO -- return false if each component of this and other are equal, false otherwise
-
-	return false; // replace this line
+	if(*this == other){
+		return false;
+	}
+	else{
+		return true;
+	} 
 }
 
 template<class T>
