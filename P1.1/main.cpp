@@ -1,5 +1,5 @@
 #include"vec.h"
-#include"mat.h"
+//#include"mat.h"
 #include<stdio.h>
 #include<stdlib.h>
 using namespace std;
@@ -35,5 +35,14 @@ int main(int argc, char** argv) {
 	random_vector -= unit_vector;
 	random_vector -= unit_vector;
 	cout << random_vector << endl;
+
+	vecf new_vector(1,2,4,6);
+	double multiplier = 2.50;
+
+	cout << 6 * new_vector << endl;
+	new_vector *= 0.5;
+	cout << new_vector << endl;
+	new_vector += 6;
+	cout << new_vector << endl;
 	return 0;	
 }

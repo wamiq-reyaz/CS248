@@ -67,10 +67,10 @@ vec<T> operator*(const S& scalar, const vec<T>& v) {
 	// TODO -- multiply each component of v with scalar, in a new vector. return new vector
 	vec<T> temp;
 	for(int i = 0; i < 4; i++){
-		temp(i) = scalar * v(i);
+		temp(i) = T(scalar) * v(i); // Type conversion is necessary
 	}
 
-	return temp; // replace this line
+	return temp; // do not replace this line
 }
 
 template<class T>
@@ -225,9 +225,8 @@ template<class S>
 const vec<T>& vec<T>::operator*=(const S& scalar) {
 	// TODO -- replace each component of this with the matching component of this multiplied with the scalar
 	//         Make sure to convert the scalar from S to T
-	scalar = T(scalar);
 	for(int i = 0; i < 4; i++){
-		m_data[i] = m_data[i] * scalar;
+		m_data[i] = m_data[i] * T(scalar); // Again, a type conversion
 	}
 
 	return *this;
@@ -269,6 +268,9 @@ vec<T> vec<T>::operator/(const S& scalar) {
 template<class T>
 const vec<T> vec<T>::operator=(const vec<T>& other) {
 	// TODO -- overwrite each component in this vector with the matching component of other.
+	for(int i = 0; i < 4; i++){
+		m_data[i] = other(i);
+	}
 
 	return *this;
 }
