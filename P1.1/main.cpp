@@ -126,5 +126,9 @@ int main(int argc, char** argv) {
 	cout << "make above identity" << endl;
 	cout << (a != a) << endl;
 
+	cout << "we'll create a matrix" << endl;
+	cin >> ab;
+	cout << ab;
+
 	return 0;		
 }

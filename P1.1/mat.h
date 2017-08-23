@@ -87,7 +87,11 @@ std::ostream& operator<<(std::ostream& out, const mat<T>& M) {
 template<class T>
 std::istream& operator>>(std::istream& in, mat<T>& M) {
 	// TODO: read a matrix row-by-row from the "in" stream
-
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			in >> M(ii, jj); 
+		}
+	}
 	return in;
 }
 
