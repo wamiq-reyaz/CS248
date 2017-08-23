@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
 	// TODO -- test every vector and matrix function. Submit your code with tests in here.
 
 	//crappy test for everything
-	vecf zero_vector; 
+	vecd zero_vector; 
 	vecf unit_vector(1);
 	cout << zero_vector; 	
 	vecf random_vector(88,2,3,4);
@@ -63,5 +63,11 @@ int main(int argc, char** argv) {
 	vecd b(0, 0, 0, 0);
 	thingy = b;
 	cout << thingy << endl;
+
+	//operator ==
+	cout << (zero_vector == b) << endl;
+
 	return 0;	
+
+	
 }
