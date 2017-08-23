@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
 	// operator *
 	vecf new_vector(1,2,4,6);
 	double multiplier = 2.50;
-	cout << 6 * new_vector << endl;
+	//cout << 6 * new_vector << endl;
 
 	//operator *=
 	new_vector *= 0.5;

@@ -61,7 +61,15 @@ template<class S, class T>
 mat<T> operator*(const S& scalar, const vec<T>& M) {
 	// TODO -- multiply each component of M with scalar, in a new matrix. return new matrix
 
-	return mat<T>(); // replace this line
+	mat<T> temp;
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj--){
+			// special concern. Make sure to convert S to T to prevent 
+			// floats from becoming doubles
+			temp(ii, jj) = T(scalar) * M(ii, jj);
+		}
+	}
+	return temp; // replace this line
 }
 
 template<class T>
@@ -82,7 +90,7 @@ std::istream& operator>>(std::istream& in, mat<T>& M) {
 
 template<class T>
 mat<T>::mat(void) {
-	// TODO -- initialize m_data with 0s
+	// do nothing. Arithmetic values are set to zero by default
 }
 
 template<class T>
