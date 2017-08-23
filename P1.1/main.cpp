@@ -67,6 +67,9 @@ int main(int argc, char** argv) {
 	//operator ==
 	cout << (zero_vector == b) << endl;
 
+	//operator !=
+	cout << "this tests whether zero vector != b (another zero vector)" << endl;
+	cout << (zero_vector != b) << endl;
 	return 0;	
 
 	
