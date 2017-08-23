@@ -75,6 +75,12 @@ mat<T> operator*(const S& scalar, const vec<T>& M) {
 template<class T>
 std::ostream& operator<<(std::ostream& out, const mat<T>& M) {
 	// TODO: output a matrix row-by-row to the "out" stream
+	for(int ii = 0; ii < 4; ii++){
+		for(int jj = 0; jj < 4; jj++){
+			out << M(ii, jj) << " "; // print a row with space between elements
+		}
+		out << std::endl; // add a newline after each row
+	}
 
 	return out;
 }
@@ -91,6 +97,9 @@ std::istream& operator>>(std::istream& in, mat<T>& M) {
 template<class T>
 mat<T>::mat(void) {
 	// do nothing. Arithmetic values are set to zero by default
+	for(int ii = 0; ii < 16; ii++){
+		m_data[ii] = T(0);
+	}
 }
 
 template<class T>

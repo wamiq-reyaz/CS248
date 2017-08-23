@@ -104,7 +104,11 @@ int main(int argc, char** argv) {
 
 	// operator >>
 	vecf aaaa;
-	cin >> aaaa;
-	cout << aaaa << "was this what you entered?" << endl;
+	//cin >> aaaa;
+	//cout << aaaa << "was this what you entered?" << endl;
+
+	matf zeros;
+	cout << zeros;
+
 	return 0;		
 }
