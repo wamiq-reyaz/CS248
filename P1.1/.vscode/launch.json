@@ -5,7 +5,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "a.out",
+            "program": "${workspaceRoot}/test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
