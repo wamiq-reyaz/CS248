@@ -15,6 +15,9 @@ const float eps = 1e-5;
 
 //===================================================================//
 
+// ranges of floats and doubles
+const float LO = -800;
+const float HI = 800;
 
 
 vecf rand_vecf(void){
@@ -25,8 +28,8 @@ vecf rand_vecf(void){
 */
     float a[4]; // elements are floats
     for(int ii = 0; ii < 4; ii++){
-        a[ii] = static_cast<float> (rand() /
-                            static_cast<float>(RAND_MAX/ (RAND_MAX/64))); // 64 is arbitrary
+        a[ii] = LO + static_cast<float> (rand() /
+                            static_cast<float>(RAND_MAX / (HI - LO))); 
     }
     // fill the vector
     vecf temp(a[0], a[1], a[2], a[3]);
@@ -38,11 +41,12 @@ vecd rand_vecd(void){
 *  Return: vecd
 * This helper function returns a vector of random
 * doubles
-*/
-    double a[4]; // elements are floats
+*/  
+
+    double a[4]; // elements are doubles
     for(int ii = 0; ii < 4; ii++){
-        a[ii] = static_cast<double> (rand() /
-                            static_cast<double>(RAND_MAX/ (RAND_MAX/64))); // 64 is arbitrary
+        a[ii] = LO + static_cast<double> (rand() /
+                            static_cast<double>(RAND_MAX/ (HI - LO))); // 64 is arbitrary
     }
     // fill the vector
     vecd temp(a[0], a[1], a[2], a[3]);
@@ -50,13 +54,13 @@ vecd rand_vecd(void){
     }
 
 float rand_f(void){
-    return static_cast<float> (rand() /
-                static_cast<float>(RAND_MAX/ (RAND_MAX/64))) / 1e20; // div prevents overflow (generally)
+    return LO + static_cast<float> (rand() /
+                static_cast<float>(RAND_MAX/ (HI - LO))); // div prevents overflow (generally)
 }
 
 double rand_d(void){
-    return static_cast<double> (rand() /
-                static_cast<double>(RAND_MAX/ (RAND_MAX/64))) / 1e20;
+    return LO + static_cast<double> (rand() /
+                static_cast<double>(RAND_MAX/ (HI - LO)));
 }
 
 template<class T>
@@ -68,7 +72,7 @@ void check(vec<T> v, T expected[]){
 *  value of the elements
 */
     for(int ii = 0; ii < 4; ii++){
-        CHECK(fabs(v(ii) - expected[ii - 1]) < eps); // - 1 because indexing begins at 0
+        CHECK(fabs(v(ii) - expected[ii]) < eps); // - 1 because indexing begins at 0
     }
 }
 
@@ -404,7 +408,84 @@ TEST_CASE("Vectors", "[vec]"){
             }
             check(a_vecd , expected);
         }
+    }
 
+    SECTION("Scalar division"){
+        /* The cases to test are zero, negative numbers, positive numbers
+        */
+
+        // test zero float first 
+        for(int ii = 0; ii < 100; ii++){
+            // intialize vectors
+            vecf v = rand_vecf(), a_vecf;
+            float expected[4]; // intialized to zero
+            a_vecf = v * 0;
+            check(a_vecf , expected);
+        }
+
+        // zero double 
+        for(int ii = 0; ii < 100; ii++){
+            vecd v = rand_vecd(), a_vecd;
+            double expected[4]; // intialized to zero
+            a_vecd = v * 0;
+            check(a_vecd , expected);
+        }
+
+        SECTION("Negative floats")
+        for(int ii = 0; ii < 100; ii++){
+            vecf v = rand_vecf(), a_vecf;
+            float randf = rand_f(); // an number to /
+            float expected[4]; 
+
+            a_vecf = v / -randf; // notice -randf
+
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v(jj) / -randf;
+            }
+            check(a_vecf , expected);
+        }
+
+        SECTION("Postive floats")
+        for(int ii = 0; ii < 100; ii++){
+            vecf v = rand_vecf(), a_vecf;
+            float randf = rand_f(); // an number to /
+            float expected[4]; 
+
+            a_vecf = v / randf;
+
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v(jj) / randf;
+            }
+            check(a_vecf , expected);
+        }
+
+        SECTION("Negative doubles")
+        for(int ii = 0; ii < 100; ii++){
+            vecd v = rand_vecd(), a_vecd;
+            double randd = rand_d(); 
+            double expected[4]; 
+
+            a_vecd = v / -randd; // notice -randf
+
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v(jj) / -randd;
+            }
+            check(a_vecd , expected);
+        }
+
+        SECTION("Postive doubles")
+        for(int ii = 0; ii < 100; ii++){
+            vecd v = rand_vecd(), a_vecd;
+            double randd = rand_d();
+            double expected[4]; 
+
+            a_vecd = v / randd;
+
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v(jj) / randd;
+            }
+            check(a_vecd , expected);
+        }
     }
 }
 
