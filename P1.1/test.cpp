@@ -19,7 +19,6 @@ const float eps = 1e-5;
 const float LO = -800;
 const float HI = 800;
 
-
 vecf rand_vecf(void){
 /* Arg: void
 *  Return: vecf
@@ -46,7 +45,7 @@ vecd rand_vecd(void){
     double a[4]; // elements are doubles
     for(int ii = 0; ii < 4; ii++){
         a[ii] = LO + static_cast<double> (rand() /
-                            static_cast<double>(RAND_MAX/ (HI - LO))); // 64 is arbitrary
+                            static_cast<double>(RAND_MAX/ (HI - LO))); 
     }
     // fill the vector
     vecd temp(a[0], a[1], a[2], a[3]);
@@ -55,7 +54,7 @@ vecd rand_vecd(void){
 
 float rand_f(void){
     return LO + static_cast<float> (rand() /
-                static_cast<float>(RAND_MAX/ (HI - LO))); // div prevents overflow (generally)
+                static_cast<float>(RAND_MAX/ (HI - LO))); 
 }
 
 double rand_d(void){
@@ -725,7 +724,7 @@ TEST_CASE("Vectors", "[vec]"){
         }
     }
 
-    SECTION("Operator =+"){
+    SECTION("Operator -="){
         //floats
         for(int ii = 0; ii < 100; ii++){
             vecf v1 = rand_vecf(), v2 = rand_vecf();
@@ -766,5 +765,62 @@ TEST_CASE("Vectors", "[vec]"){
             CHECK(&v1 == v1_orig_addr);
         }
     }
+
+    SECTION("Dot product"){
+        /* This section is gonna focus on only few examples with
+        *  pre-known answers. Instead, for testing we use the properties
+        * of dot product on random vectors. These are the properties:
+        * 1 Commutativity
+        * 2 Distributivity
+        */
+
+        SECTION("Known examples"){
+            // float
+            vecf xf(1), yf(0,1), zf(0, 0, 1), zerof;
+            CHECK(xf.dot(yf) == 0);
+            CHECK(xf.dot(zf) == 0);
+            CHECK(yf.dot(zf) == 0);
+
+            //double
+            vecd xd(1), yd(0,1), zd(0, 0, 1), zerod;
+            CHECK(xd.dot(yd) == 0);
+            CHECK(xd.dot(zd) == 0);
+            CHECK(yd.dot(zd) == 0);
+        }
+
+        SECTION("Commutativity"){
+            /* We'll simply see if v1*v2 = v2.v1
+            */
+            // float
+            for(int ii = 0; ii < 100; ii++){
+                vecf v1 = rand_vecf(), v2 = rand_vecf();
+                CHECK(v1.dot(v2) == v2.dot(v1)); //the orders been changed
+            }
+
+            //double
+            for(int ii = 0; ii < 100; ii++){
+                vecd v1 = rand_vecd(), v2 = rand_vecd();
+                CHECK(v1.dot(v2) == v2.dot(v1)); 
+            }
+        }
+
+        SECTION("Distributivity"){
+            /* TODO: A lot of these tests fail because of floating point issues
+            * 
+            */
+            // float
+            for(int ii = 0; ii < 100; ii++){
+                vecf v1 = rand_vecf(), v2 = rand_vecf(), v3 = rand_vecf();
+                CHECK(v1.dot(v2 + v3) == (v1.dot(v2) + v1.dot(v3))); //the RHS has been expanded
+            }
+
+            //double
+            for(int ii = 0; ii < 100; ii++){
+                vecd v1 = rand_vecd(), v2 = rand_vecd(), v3 = rand_vecd();
+                CHECK(v1.dot(v2 + v3) == (v1.dot(v2) + v1.dot(v3))); 
+            }
+        }
+    }
 }
+
 
