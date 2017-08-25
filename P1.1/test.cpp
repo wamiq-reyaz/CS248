@@ -501,6 +501,19 @@ TEST_CASE("Vectors", "[vec]"){
             }
             check(a_vecf, expected);
         }
+
+        for(int ii = 0; ii < 100; ii++){
+            //doubles
+            vecd v = rand_vecd(), a_vecd;
+            double expected[4];
+
+            a_vecd = v;
+
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v(jj);
+            }
+            check(a_vecd, expected);
+        }
     }
 
     SECTION("Operator =="){
@@ -509,6 +522,32 @@ TEST_CASE("Vectors", "[vec]"){
             vecf v = rand_vecf(), a_vecf;
             a_vecf = v;
             CHECK((a_vecf == v) == true); // the comparison of a, v should yield true
+        }
+
+        for(int ii = 0; ii < 100; ii++){
+            vecd v = rand_vecd(), a_vecd;
+            a_vecd = v;
+            CHECK((a_vecd == v) == true); // the comparison of a, v should yield true
+        }
+    }
+
+    SECTION("Operator !="){
+        //floats
+        for(int ii = 0; ii < 100; ii++){
+            vecf v = rand_vecf(), a_vecf;
+            a_vecf = v;
+            // randomly perturb the values of a_vecf
+            a_vecf(ii % 4) = a_vecf(ii % 4) + rand_f();
+            CHECK((a_vecf != v) == true); // the comparison of a, v should yield true
+        }
+
+        //doubles
+        for(int ii = 0; ii < 100; ii++){
+            vecd v = rand_vecd(), a_vecd;
+            a_vecd = v;
+            // randomly perturb the values of a_vecd
+            a_vecd(ii % 4) = a_vecd(ii % 4) + rand_d();
+            CHECK((a_vecd != v) == true); // the comparison of a, v should yield true
         }
     }
     
