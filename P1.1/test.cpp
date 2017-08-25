@@ -592,9 +592,23 @@ TEST_CASE("Vectors", "[vec]"){
 
             check(a_vecf, expected);
         }
+
+        //doubles
+        for(int ii = 0; ii < 100; ii++){
+            vecd v1 = rand_vecd(), v2 = rand_vecd(), a_vecd;
+            double expected[4];
+            a_vecd = v1 + v2;
+
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v1(jj) + v2(jj);
+            }
+
+            check(a_vecd, expected);
+        }
     }
 
     SECTION("Operator -(other"){
+        //float
         vecf v1 = rand_vecf(), v2 = rand_vecf(), a_vecf;
         float expected[4];
         a_vecf = v1 - v2;
@@ -604,6 +618,153 @@ TEST_CASE("Vectors", "[vec]"){
         }
         
         check(a_vecf, expected);
+
+        //doubles
+        for(int ii = 0; ii < 100; ii++){
+            vecd v1 = rand_vecd(), v2 = rand_vecd(), a_vecd;
+            double expected[4];
+            a_vecd = v1 - v2;
+
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v1(jj) - v2(jj);
+            }
+
+            check(a_vecd, expected);
+        }
+    }
+
+    SECTION("Operator +="){
+        /* This section needs to check the correctness of the addition
+        *  and also that the returned object is the same, and not a copy
+        *  by verifying pointer does not change
+        */
+
+        //floats
+        for(int ii = 0; ii < 100; ii++){
+            vecf v1 = rand_vecf(), v2 = rand_vecf();
+            float expected[4];
+            vecf* v1_orig_addr = &v1; //original address of v1
+
+            // find expected values first. Otherwise the vec<T> is going to
+            // change
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v1(jj) + v2(jj);
+            }
+
+            v1 += v2;        
+
+            check(v1, expected);
+
+            //also check that v1 still is the same
+            CHECK(&v1 == v1_orig_addr);
+        }
+
+        //doubles
+        for(int ii = 0; ii < 100; ii++){
+            vecd v1 = rand_vecd(), v2 = rand_vecd();
+            double expected[4];
+            vecd* v1_orig_addr = &v1; //original address of v1
+
+            // find expected values first. Otherwise the vec<T> is going to
+            // change
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v1(jj) + v2(jj);
+            }
+
+            v1 += v2;        
+
+            check(v1, expected);
+
+            //also check that v1 still is the same
+            CHECK(&v1 == v1_orig_addr);
+        }
+    }
+
+    SECTION("Operator *="){
+        /* *= takes a scalar and a vector so we need only one vector
+            and a scalar
+        */
+        //floats
+        for(int ii = 0; ii < 100; ii++){
+            vecf v1 = rand_vecf();
+            float expected[4], a_f = rand_f(); //a_f is the scalar, generated randomly
+            vecf* v1_orig_addr = &v1; //original address of v1
+
+            // find expected values first. Otherwise the vec<T> is going to
+            // change
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v1(jj) * a_f;
+            }
+
+            v1 *= a_f;        
+
+            check(v1, expected);
+
+            //also check that v1 still is the same
+            CHECK(&v1 == v1_orig_addr);
+        }
+
+        //doubles
+        for(int ii = 0; ii < 100; ii++){
+            vecd v1 = rand_vecd();
+            double expected[4], a_d = rand_d();
+            vecd* v1_orig_addr = &v1; //original address of v1
+
+            // find expected values first. Otherwise the vec<T> is going to
+            // change
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v1(jj) * a_d;
+            }
+
+            v1 *= a_d;        
+
+            check(v1, expected);
+
+            //also check that v1 still is the same
+            CHECK(&v1 == v1_orig_addr);
+        }
+    }
+
+    SECTION("Operator =+"){
+        //floats
+        for(int ii = 0; ii < 100; ii++){
+            vecf v1 = rand_vecf(), v2 = rand_vecf();
+            float expected[4];
+            vecf* v1_orig_addr = &v1; //original address of v1
+
+            // find expected values first. Otherwise the vec<T> is going to
+            // change
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v1(jj) - v2(jj);
+            }
+
+            v1 -= v2;        
+
+            check(v1, expected);
+
+            //also check that v1 still is the same
+            CHECK(&v1 == v1_orig_addr);
+        }
+
+        //doubles
+        for(int ii = 0; ii < 100; ii++){
+            vecd v1 = rand_vecd(), v2 = rand_vecd();
+            double expected[4];
+            vecd* v1_orig_addr = &v1; //original address of v1
+
+            // find expected values first. Otherwise the vec<T> is going to
+            // change
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v1(jj) - v2(jj);
+            }
+
+            v1 -= v2;        
+
+            check(v1, expected);
+
+            //also check that v1 still is the same
+            CHECK(&v1 == v1_orig_addr);
+        }
     }
 }
 
