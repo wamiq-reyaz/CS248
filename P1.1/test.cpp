@@ -502,5 +502,15 @@ TEST_CASE("Vectors", "[vec]"){
             check(a_vecf, expected);
         }
     }
+
+    SECTION("Operator =="){
+        // all vectors must be equal to themselves
+        for(int ii = 0; ii < 100; ii++){
+            vecf v = rand_vecf(), a_vecf;
+            a_vecf = v;
+            CHECK((a_vecf == v) == true); // the comparison of a, v should yield true
+        }
+    }
+    
 }
 
