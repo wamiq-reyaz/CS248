@@ -270,6 +270,7 @@ const vec<T>& vec<T>::operator*=(const S& scalar) {
 
 	return *this;
 }
+
 template<class T>
 template<class S> 
 const vec<T>& vec<T>::operator/=(const S& scalar) {
@@ -324,13 +325,14 @@ template<class T>
 bool vec<T>::operator==(const vec<T>& other) const {
 	// TODO -- return true if each component of this and other are equal, false otherwise
 	for(int ii = 0; ii < 4; ii++){
-		if(m_data[ii] != other(ii)){
+		if(fabs(m_data[ii] - other(ii)) > 1e-5){ // if difference is greater than 1e-5
+												// it is more than floating point error
 			//return false immediately
 			return false;
 		}
 	}
 
-	//otherwise all elements are equal
+	//otherwise all elements are almost equal
 	return true; // do not replace this line
 }
 
