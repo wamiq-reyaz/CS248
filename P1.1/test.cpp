@@ -19,6 +19,12 @@ const float eps = 1e-5;
 const float LO = -800;
 const float HI = 800;
 
+template<class T>
+vec<T> rand_vec(T){
+    vec<T> a;
+    return a;
+}
+
 vecf rand_vecf(void){
 /* Arg: void
 *  Return: vecf
@@ -28,7 +34,7 @@ vecf rand_vecf(void){
     float a[4]; // elements are floats
     for(int ii = 0; ii < 4; ii++){
         a[ii] = LO + static_cast<float> (rand() /
-                            static_cast<float>(RAND_MAX / (HI - LO))); 
+                            static_cast<float>(RAND_MAX / (HI - LO))); // TODO insert SE link
     }
     // fill the vector
     vecf temp(a[0], a[1], a[2], a[3]);
@@ -63,7 +69,8 @@ double rand_d(void){
 }
 
 template<class T>
-void check(vec<T> v, T expected[]){
+// inline helps get the line number during testing
+inline void check(vec<T> v, T expected[]){ 
 /* Args: vec<T> v, the vector to be checked
 *         T expected[], the expected element values
 *  Return : void
@@ -71,7 +78,7 @@ void check(vec<T> v, T expected[]){
 *  value of the elements
 */
     for(int ii = 0; ii < 4; ii++){
-        CHECK(fabs(v(ii) - expected[ii]) < eps); // - 1 because indexing begins at 0
+        CHECK(fabs(v(ii) - expected[ii]) < eps); 
     }
 }
 
@@ -110,7 +117,7 @@ void test_length(vec<T> v, T length_array[]){
 
 TEST_CASE("Vectors", "[vec]"){
     //seed for the PRNG
-    srand(100);
+    srand(time(NULL));
 
     SECTION("Default Constructor"){
         // init some vectors needed for testing
@@ -781,11 +788,19 @@ TEST_CASE("Vectors", "[vec]"){
             CHECK(xf.dot(zf) == 0);
             CHECK(yf.dot(zf) == 0);
 
+            CHECK(xf.dot(zerof) == 0);
+            CHECK(xf.dot(zerof) == 0);
+            CHECK(yf.dot(zerof) == 0);
+
             //double
             vecd xd(1), yd(0,1), zd(0, 0, 1), zerod;
             CHECK(xd.dot(yd) == 0);
             CHECK(xd.dot(zd) == 0);
             CHECK(yd.dot(zd) == 0);
+
+            CHECK(xd.dot(zerod) == 0);
+            CHECK(xd.dot(zerod) == 0);
+            CHECK(yd.dot(zerod) == 0);
         }
 
         SECTION("Commutativity"){
@@ -794,13 +809,13 @@ TEST_CASE("Vectors", "[vec]"){
             // float
             for(int ii = 0; ii < 100; ii++){
                 vecf v1 = rand_vecf(), v2 = rand_vecf();
-                CHECK(v1.dot(v2) == v2.dot(v1)); //the orders been changed
+                CHECK(fabs(v1.dot(v2) - v2.dot(v1)) < eps); //the orders been changed
             }
 
             //double
             for(int ii = 0; ii < 100; ii++){
                 vecd v1 = rand_vecd(), v2 = rand_vecd();
-                CHECK(v1.dot(v2) == v2.dot(v1)); 
+                CHECK(fabs(v1.dot(v2) - v2.dot(v1)) < eps); 
             }
         }
 
@@ -811,15 +826,142 @@ TEST_CASE("Vectors", "[vec]"){
             // float
             for(int ii = 0; ii < 100; ii++){
                 vecf v1 = rand_vecf(), v2 = rand_vecf(), v3 = rand_vecf();
-                CHECK(v1.dot(v2 + v3) == (v1.dot(v2) + v1.dot(v3))); //the RHS has been expanded
+                CHECK(fabs(v1.dot(v2 + v3) - (v1.dot(v2) + v1.dot(v3))) < eps); //the RHS has been expanded
             }
 
             //double
             for(int ii = 0; ii < 100; ii++){
                 vecd v1 = rand_vecd(), v2 = rand_vecd(), v3 = rand_vecd();
-                CHECK(v1.dot(v2 + v3) == (v1.dot(v2) + v1.dot(v3))); 
+                CHECK(fabs(v1.dot(v2 + v3) - (v1.dot(v2) + v1.dot(v3))) < eps); 
             }
         }
+    }
+
+    SECTION("Cross Product"){
+        /* Again we are gonna use some known cases and a lot of cases for properties
+        * The properties are:
+        * 1 Anticommutativity
+        * 2 Distributivity
+        */
+        SECTION("Known examples"){
+            //floats
+            vecf xf(1), yf(0,1), zf(0, 0, 1), zerof;
+            CHECK(xf.cross(yf) == zf);
+            CHECK(xf.cross(zf) == -yf);
+            CHECK(yf.cross(zf) == xf);
+
+            CHECK(xf.cross(zerof) == zerof);
+            CHECK(xf.cross(zerof) == zerof);
+            CHECK(yf.cross(zerof) == zerof);
+
+            //double
+            vecd xd(1), yd(0,1), zd(0, 0, 1), zerod;
+            CHECK(xd.cross(yd) == zd);
+            CHECK(xd.cross(zd) == -yd);
+            CHECK(yd.cross(zd) == xd);
+
+            CHECK(xd.cross(zerod) == zerod);
+            CHECK(xd.cross(zerod) == zerod);
+            CHECK(yd.cross(zerod) == zerod);
+        }
+
+        SECTION("Anticommutativity"){
+            /* We'll simply see if v1*v2 = -v2*v1
+            * or v2*v1 + v2.v1 == vec<T> zero
+            */
+            vecf zero_f;
+            vecd zero_d;
+            // float
+            for(int ii = 0; ii < 100; ii++){
+                vecf v1 = rand_vecf(), v2 = rand_vecf();
+                CHECK(v1.cross(v2) + v2.cross(v1) == zero_f); //the orders been changed
+            }
+
+            //double
+            for(int ii = 0; ii < 100; ii++){
+                vecd v1 = rand_vecd(), v2 = rand_vecd();
+                CHECK(v1.cross(v2) + v2.cross(v1) < zero_d); 
+            }
+        }
+
+        SECTION("Distributivity"){
+            vecf zero_f;
+            vecd zero_d;
+            //float
+            for(int ii = 0; ii < 100; ii++){
+                vecf v1 = rand_vecf(), v2 = rand_vecf(), v3 = rand_vecf();
+                CHECK(v1.cross(v2 + v3) - (v1.cross(v2) + v1.cross(v3)) 
+                                                            == zero_f); //the RHS has been expanded
+            }
+
+            //double
+            for(int ii = 0; ii < 100; ii++){
+                vecd v1 = rand_vecd(), v2 = rand_vecd(), v3 = rand_vecd();
+                CHECK(v1.cross(v2 + v3) - (v1.cross(v2) + v1.cross(v3)) 
+                                                            == zero_d); 
+            }
+        }
+    }
+
+    SECTION("Normalize"){
+        /* We use a list of known vectors to test
+        */
+
+        //float
+        //zero vector
+        vecf zero;
+        zero.normalize();
+        for(int ii = 0; ii < 4; ii++){
+            CHECK(zero(ii) == 0);
+        }
+
+        vecf one(1);
+        // first element is 1. Rest are 0
+        float expected[4] = {1,0,0,0};
+        for(int ii =0; ii < 5; ii++){ // four possible options 0 - 4
+            one.normalize(ii); // doing this does not change the vector
+            check(one, expected); // expected also remains constant throughout the loop
+        }
+        
+        //vec(1,1)
+        float expected_1_1[5][4] = {{1,1,0,0},
+                                    {1,1,0,0},
+                                    {1/sqrt(2), 1/sqrt(2), 0, 0},
+                                    {1/sqrt(2), 1/sqrt(2), 0, 0},
+                                    {1/sqrt(2), 1/sqrt(2), 0, 0}};
+
+        for(int ii = 0; ii < 5; ii++){
+            vecf a(1,1);
+            a.normalize(ii);
+            check(a, expected_1_1[ii]);
+        }
+
+        //vec(1,1,1)       
+        float expected_1_1_1[5][4] = {{1,1,1,0},
+                                    {1,1,1,0},
+                                    {1/sqrt(2), 1/sqrt(2), 1, 0},
+                                    {1/sqrt(3), 1/sqrt(3), 1/sqrt(3), 0},
+                                    {1/sqrt(3), 1/sqrt(3), 1/sqrt(3), 0}};
+
+        for(int ii = 0; ii < 5; ii++){
+            vecf b(1,1, 1);
+            b.normalize(ii);
+            check(b, expected_1_1_1[ii]);
+        }
+
+        //vec(1,1,1)       
+        float expected_1_1_1_1[5][4] = {{1,1,1,1},
+                                    {1,1,1,1},
+                                    {1/sqrt(2), 1/sqrt(2), 1, 1},
+                                    {1/sqrt(3), 1/sqrt(3), 1/sqrt(3), 1},
+                                    {1/sqrt(4), 1/sqrt(4), 1/sqrt(4), 1/sqrt(4)}};
+
+        for(int ii = 0; ii < 5; ii++){
+        vecf c(1,1, 1, 1);
+        c.normalize(ii);
+        check(c, expected_1_1_1_1[ii]);
+        }
+        
     }
 }
 
