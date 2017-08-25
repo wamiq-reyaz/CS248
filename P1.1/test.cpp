@@ -550,6 +550,34 @@ TEST_CASE("Vectors", "[vec]"){
             CHECK((a_vecd != v) == true); // the comparison of a, v should yield true
         }
     }
+
+    SECTION("Operator -"){
+        //floats
+        for(int ii = 0; ii < 100; ii++){
+            vecf v = rand_vecf(), a_vecf;
+            float expected[4];
+            a_vecf = -v;
+
+            for(int jj =0; jj < 4; jj++){
+                expected[jj] = -v(jj);
+            }
+
+            check(a_vecf, expected);
+        }
+
+        //doubles
+        for(int ii = 0; ii < 100; ii++){
+            vecd v = rand_vecd(), a_vecd;
+            double expected[4];
+            a_vecd = -v;
+
+            for(int jj =0; jj < 4; jj++){
+                expected[jj] = -v(jj);
+            }
+
+            check(a_vecd, expected);
+        }
+    }
     
 }
 
