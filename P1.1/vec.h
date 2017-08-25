@@ -129,7 +129,7 @@ vec<T>::~vec(void) {
 template<class T>
 T vec<T>::length2(size_t n) const {
 	// TODO -- what does the following line do? Be prepared to explain to the T
-	// ensures that we do nt compute the length from 8 elements when only 4 exist
+	// ensures that we dont compute the length from 8 elements when only 4 exist
 	assert("vec<T>::length2() -- invalid argument" && n < 5);
 	// TODO -- compute squared length of the first n components of the vector
 	if(n == 0){
@@ -151,7 +151,7 @@ T vec<T>::length(size_t n) const {
 	// TODO -- compute the length of the first n components of the vector
 	// T because we need a return type T
 	if(n == 0){
-		return 0;
+		return T(0);
 	}
 	else{
 		return T(sqrt(this->length2(n))); // do not replace this line
