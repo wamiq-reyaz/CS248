@@ -487,5 +487,20 @@ TEST_CASE("Vectors", "[vec]"){
             check(a_vecd , expected);
         }
     }
+
+    SECTION("Operator ="){
+        for(int ii = 0; ii < 100; ii++){
+            //floats
+            vecf v = rand_vecf(), a_vecf;
+            float expected[4];
+
+            a_vecf = v;
+
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v(jj);
+            }
+            check(a_vecf, expected);
+        }
+    }
 }
 
