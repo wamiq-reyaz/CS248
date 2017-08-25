@@ -579,5 +579,31 @@ TEST_CASE("Vectors", "[vec]"){
         }
     }
     
+    SECTION("Operator +"){
+        //floats
+        for(int ii = 0; ii < 100; ii++){
+            vecf v1 = rand_vecf(), v2 = rand_vecf(), a_vecf;
+            float expected[4];
+            a_vecf = v1 + v2;
+
+            for(int jj = 0; jj < 4; jj++){
+                expected[jj] = v1(jj) + v2(jj);
+            }
+
+            check(a_vecf, expected);
+        }
+    }
+
+    SECTION("Operator -(other"){
+        vecf v1 = rand_vecf(), v2 = rand_vecf(), a_vecf;
+        float expected[4];
+        a_vecf = v1 - v2;
+
+        for(int jj = 0; jj < 4; jj++){
+            expected[jj] = v1(jj) - v2(jj);
+        }
+        
+        check(a_vecf, expected);
+    }
 }
 
