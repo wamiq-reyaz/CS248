@@ -1107,7 +1107,28 @@ TEST_CASE("Matrices", "[mat]"){
     }
 
     SECTION("Identity"){
-        //
+        //expected values
+        float I_f[16] = {1 ,0, 0, 0,
+                         0, 1, 0, 0,
+                         0, 0, 1, 0,
+                         0, 0, 0, 1};
+
+        double I_d[16] = {1 ,0, 0, 0,
+                          0, 1, 0, 0,
+                          0, 0, 1, 0,
+                          0, 0, 0, 1};
+
+        for(int kk = 0; kk < 100; kk++){
+            matf ma_f = rand_matf();
+            matd mb_d = rand_matd();
+
+            //convert to identity
+            ma_f.identity();
+            mb_d.identity();
+
+            check_mat(ma_f, I_f);
+            check_mat(mb_d, I_d);
+        }
     }
 
     SECTION("Transpose"){
