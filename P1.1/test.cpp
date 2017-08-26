@@ -11,19 +11,19 @@
 #include<ctime> // for rand/srand
 
 // use this as a threshold
-const float eps = 1e-5;
+const float EPS = 1e-5;
+
+// Vector Length
+const int VEC_LEN = 4;
+
+// Matrix Length
+const int MAT_LEN = 16;
 
 //===================================================================//
 
 // ranges of floats and doubles
 const float LO = -800;
 const float HI = 800;
-
-template<class T>
-vec<T> rand_vec(T){
-    vec<T> a;
-    return a;
-}
 
 vecf rand_vecf(void){
 /* Arg: void
@@ -32,7 +32,7 @@ vecf rand_vecf(void){
 * floats
 */
     float a[4]; // elements are floats
-    for(int ii = 0; ii < 4; ii++){
+    for(int ii = 0; ii < VEC_LEN; ii++){
         a[ii] = LO + static_cast<float> (rand() /
                             static_cast<float>(RAND_MAX / (HI - LO))); // TODO insert SE link
     }
@@ -49,7 +49,7 @@ vecd rand_vecd(void){
 */  
 
     double a[4]; // elements are doubles
-    for(int ii = 0; ii < 4; ii++){
+    for(int ii = 0; ii < VEC_LEN; ii++){
         a[ii] = LO + static_cast<double> (rand() /
                             static_cast<double>(RAND_MAX/ (HI - LO))); 
     }
@@ -77,8 +77,8 @@ inline void check(vec<T> v, T expected[]){
 *  This function checks the elements vs the expected 
 *  value of the elements
 */
-    for(int ii = 0; ii < 4; ii++){
-        CHECK(fabs(v(ii) - expected[ii]) < eps); 
+    for(int ii = 0; ii < VEC_LEN; ii++){
+        CHECK(fabs(v(ii) - expected[ii]) < EPS); 
     }
 }
 
@@ -93,26 +93,25 @@ void test_length2(vec<T> v, T length_array[]){
 * is called.
 * We check for each length(n) vs expected length
 */
-    for(int ii = 1; ii <= 4; ii++){
+    for(int ii = 1; ii <= VEC_LEN; ii++){
         CHECK(fabs(v.length2(ii) - 
-         length_array[ii - 1]) < eps); 
+         length_array[ii - 1]) < EPS); 
     }
 }
 
 template<class T>
 void test_length(vec<T> v, T length_array[]){
     // Like test_length2 but for length
-    for(int ii = 1; ii <= 4; ii++){
+    for(int ii = 1; ii <= VEC_LEN; ii++){
         CHECK(fabs(v.length(ii) - 
-         length_array[ii - 1]) < eps);
+         length_array[ii - 1]) < EPS);
     }
 }
 
 //==========================================================================//
 
 /* This is the collection of tests for the vector class
-*  The tests name and argument is in the TEST_CASE
-*  arguments
+*  The test's name is in the SECTION arguments
 */
 
 TEST_CASE("Vectors", "[vec]"){
@@ -129,7 +128,7 @@ TEST_CASE("Vectors", "[vec]"){
 
         SECTION("Zero initialization")
         // test that the 4 elements are zero
-        for(int ii = 0; ii < 4; ii++){
+        for(int ii = 0; ii < VEC_LEN; ii++){
             CHECK(vd_init_default(ii) == 0);
             CHECK(vd_init_default(ii) == 0);
         }
@@ -149,7 +148,7 @@ TEST_CASE("Vectors", "[vec]"){
         CHECK(vd_init_1(0) == 1);
 
         // and the rest of the elements are 0
-        for(int ii = 1; ii < 4; ii++){
+        for(int ii = 1; ii < VEC_LEN; ii++){
             CHECK(vd_init_1(ii) == 0);
             CHECK(vd_init_1(ii) == 0);
         }   
@@ -158,7 +157,7 @@ TEST_CASE("Vectors", "[vec]"){
         vecf vf_init_1_2_3_4(1, 2, 3, 4);
         vecd vd_init_1_2_3_4(1, 2, 3, 4);
 
-        for(int ii = 0; ii < 4; ii++){
+        for(int ii = 0; ii < VEC_LEN; ii++){
             CHECK(vd_init_1_2_3_4(ii) == ii + 1); // ii goes from 0 to 3
             CHECK(vd_init_1_2_3_4(ii) == ii + 1); // so add 1
         }
@@ -176,7 +175,7 @@ TEST_CASE("Vectors", "[vec]"){
         CHECK(&vd_init_1_2_3_4 != NULL);
 
         // test that the elements in the two vectors are equal
-        for(int ii = 0; ii < 4; ii++){
+        for(int ii = 0; ii < VEC_LEN; ii++){
             CHECK(vf_copy(ii) == vf_init_1_2_3_4(ii));
             CHECK(vd_copy(ii) == vd_init_1_2_3_4(ii));
         }
@@ -198,26 +197,26 @@ TEST_CASE("Vectors", "[vec]"){
         vecd vd_sqrt30(1,2,3,4); // sqrt30
 
         // length2(0) should return 0
-        CHECK(vf_zero.length2(0) - 0 < eps);
-        CHECK(vf_unit.length2(0) - 0 < eps);
-        CHECK(vf_sqrt2.length2(0) - 0 < eps);
-        CHECK(vf_sqrt2_neg.length2(0) - 0 < eps);
-        CHECK(vf_sqrt30.length2(0) - 0 < eps);
-        CHECK(vd_unit.length2(0) - 0 < eps);
-        CHECK(vd_sqrt2.length2(0) - 0 < eps);
-        CHECK(vd_sqrt2_neg.length2(0) - 0 < eps);
-        CHECK(vd_sqrt30.length2(0) - 0 < eps);
+        CHECK(vf_zero.length2(0) - 0 < EPS);
+        CHECK(vf_unit.length2(0) - 0 < EPS);
+        CHECK(vf_sqrt2.length2(0) - 0 < EPS);
+        CHECK(vf_sqrt2_neg.length2(0) - 0 < EPS);
+        CHECK(vf_sqrt30.length2(0) - 0 < EPS);
+        CHECK(vd_unit.length2(0) - 0 < EPS);
+        CHECK(vd_sqrt2.length2(0) - 0 < EPS);
+        CHECK(vd_sqrt2_neg.length2(0) - 0 < EPS);
+        CHECK(vd_sqrt30.length2(0) - 0 < EPS);
 
         /*
         * We perform the tests for the vec<float> first
         */
 
-        for(int ii = 1; ii <= 4; ii++){
-            CHECK(fabs(vf_zero.length2(ii)) - 0 < eps); // no matter the no of elements, length is zero
+        for(int ii = 1; ii <= VEC_LEN; ii++){
+            CHECK(fabs(vf_zero.length2(ii)) - 0 < EPS); // no matter the no of elements, length is zero
         }
 
-        for(int ii = 1; ii <= 4; ii++){
-            CHECK(fabs(vf_unit.length2(ii)) - 1 < eps); // length is always 1
+        for(int ii = 1; ii <= VEC_LEN; ii++){
+            CHECK(fabs(vf_unit.length2(ii)) - 1 < EPS); // length is always 1
         }
 
         float vf_sqrt2_length2[4] = {1, 2, 2, 2}; // array holding the 4 expectred lengths  
@@ -235,12 +234,12 @@ TEST_CASE("Vectors", "[vec]"){
         * We now perform the tests for vec<double>
         */
 
-        for(int ii = 1; ii <= 4; ii++){
-            CHECK(fabs(vd_zero.length2(ii)) - 0 < eps); 
+        for(int ii = 1; ii <= VEC_LEN; ii++){
+            CHECK(fabs(vd_zero.length2(ii)) - 0 < EPS); 
         }
 
-        for(int ii = 1; ii <= 4; ii++){
-            CHECK(fabs(vd_unit.length2(ii)) - 1 < eps); 
+        for(int ii = 1; ii <= VEC_LEN; ii++){
+            CHECK(fabs(vd_unit.length2(ii)) - 1 < EPS); 
         }
 
         /* We create arrays holding lengths of vectors so that they 
@@ -273,26 +272,26 @@ TEST_CASE("Vectors", "[vec]"){
         vecd vd_sqrt30(1,2,3,4);
 
         // length(0) should return 0
-        CHECK(vf_zero.length(0) - 0 < eps);
-        CHECK(vf_unit.length(0) - 0 < eps);
-        CHECK(vf_sqrt2.length(0) - 0 < eps);
-        CHECK(vf_sqrt2_neg.length(0) - 0 < eps);
-        CHECK(vf_sqrt30.length(0) - 0 < eps);
-        CHECK(vd_unit.length(0) - 0 < eps);
-        CHECK(vd_sqrt2.length(0) - 0 < eps);
-        CHECK(vd_sqrt2_neg.length(0) - 0 < eps);
-        CHECK(vd_sqrt30.length(0) - 0 < eps);
+        CHECK(vf_zero.length(0) - 0 < EPS);
+        CHECK(vf_unit.length(0) - 0 < EPS);
+        CHECK(vf_sqrt2.length(0) - 0 < EPS);
+        CHECK(vf_sqrt2_neg.length(0) - 0 < EPS);
+        CHECK(vf_sqrt30.length(0) - 0 < EPS);
+        CHECK(vd_unit.length(0) - 0 < EPS);
+        CHECK(vd_sqrt2.length(0) - 0 < EPS);
+        CHECK(vd_sqrt2_neg.length(0) - 0 < EPS);
+        CHECK(vd_sqrt30.length(0) - 0 < EPS);
 
         /*
         * We perform the tests for the vec<float> first
         */
         
-        for(int ii = 1; ii <= 4; ii++){
-            CHECK(fabs(vf_zero.length(ii) - 0) < eps); 
+        for(int ii = 1; ii <= VEC_LEN; ii++){
+            CHECK(fabs(vf_zero.length(ii) - 0) < EPS); 
         }
 
-        for(int ii = 1; ii <= 4; ii++){
-            CHECK(fabs(vf_unit.length(ii) - 1) < eps); 
+        for(int ii = 1; ii <= VEC_LEN; ii++){
+            CHECK(fabs(vf_unit.length(ii) - 1) < EPS); 
         }
 
         /* We create arrays holding lengths of vectors so that they 
@@ -314,12 +313,12 @@ TEST_CASE("Vectors", "[vec]"){
         * We now perform the tests for vec<double>
         */
 
-        for(int ii = 1; ii <= 4; ii++){
-            CHECK(fabs(vd_zero.length2(ii) - 0) < eps); 
+        for(int ii = 1; ii <= VEC_LEN; ii++){
+            CHECK(fabs(vd_zero.length2(ii) - 0) < EPS); 
         }
 
-        for(int ii = 1; ii <= 4; ii++){
-            CHECK(fabs(vd_unit.length2(ii) - 1) < eps); 
+        for(int ii = 1; ii <= VEC_LEN; ii++){
+            CHECK(fabs(vd_unit.length2(ii) - 1) < EPS); 
         }
 
         /* We create arrays holding lengths of vectors so that they 
@@ -809,13 +808,13 @@ TEST_CASE("Vectors", "[vec]"){
             // float
             for(int ii = 0; ii < 100; ii++){
                 vecf v1 = rand_vecf(), v2 = rand_vecf();
-                CHECK(fabs(v1.dot(v2) - v2.dot(v1)) < eps); //the orders been changed
+                CHECK(fabs(v1.dot(v2) - v2.dot(v1)) < EPS); //the orders been changed
             }
 
             //double
             for(int ii = 0; ii < 100; ii++){
                 vecd v1 = rand_vecd(), v2 = rand_vecd();
-                CHECK(fabs(v1.dot(v2) - v2.dot(v1)) < eps); 
+                CHECK(fabs(v1.dot(v2) - v2.dot(v1)) < EPS); 
             }
         }
 
@@ -826,13 +825,13 @@ TEST_CASE("Vectors", "[vec]"){
             // float
             for(int ii = 0; ii < 100; ii++){
                 vecf v1 = rand_vecf(), v2 = rand_vecf(), v3 = rand_vecf();
-                CHECK(fabs(v1.dot(v2 + v3) - (v1.dot(v2) + v1.dot(v3))) < eps); //the RHS has been expanded
+                CHECK(fabs(v1.dot(v2 + v3) - (v1.dot(v2) + v1.dot(v3))) < EPS); //the RHS has been expanded
             }
 
             //double
             for(int ii = 0; ii < 100; ii++){
                 vecd v1 = rand_vecd(), v2 = rand_vecd(), v3 = rand_vecd();
-                CHECK(fabs(v1.dot(v2 + v3) - (v1.dot(v2) + v1.dot(v3))) < eps); 
+                CHECK(fabs(v1.dot(v2 + v3) - (v1.dot(v2) + v1.dot(v3))) < EPS); 
             }
         }
     }
@@ -911,7 +910,7 @@ TEST_CASE("Vectors", "[vec]"){
         //zero vector
         vecf zero;
         zero.normalize();
-        for(int ii = 0; ii < 4; ii++){
+        for(int ii = 0; ii < VEC_LEN; ii++){
             CHECK(zero(ii) == 0);
         }
 
@@ -964,5 +963,73 @@ TEST_CASE("Vectors", "[vec]"){
         
     }
 }
+
+//===================================================================//
+// HELPER FUNCTION for matrices
+
+matf rand_matf(void){
+/* Arg: void
+*  Return: matf
+* This helper function returns a matrix of random
+* floats
+*/
+    float a[MAT_LEN]; 
+    for(int ii = 0; ii < MAT_LEN; ii++){
+        a[ii] = LO + static_cast<float> (rand() /
+                            static_cast<float>(RAND_MAX / (HI - LO))); 
+    }
+
+    matf temp(a[0],  a[1],  a[2],  a[3],
+              a[4],  a[5],  a[6],  a[7],
+              a[8],  a[9],  a[10], a[11],
+              a[12], a[13], a[14], a[15]);
+    return temp;
+}
+
+matd rand_matd(void){
+/* Arg: void
+*  Return: matd
+* This helper function returns a matrix of random
+* doubles
+*/  
+
+    double a[MAT_LEN]; 
+    for(int ii = 0; ii < MAT_LEN; ii++){
+        a[ii] = LO + static_cast<double> (rand() /
+                            static_cast<double>(RAND_MAX/ (HI - LO))); 
+    }
+
+    matd temp(a[0],  a[1],  a[2],  a[3],
+              a[4],  a[5],  a[6],  a[7],
+              a[8],  a[9],  a[10], a[11],
+              a[12], a[13], a[14], a[15]);
+    return temp;
+}
+
+
+template<class T>
+// inline helps get the line number during testing
+inline void check_mat(mat<T> m, T expected[]){ 
+/* Args: mat<T> m
+*        T expected[]
+*  Return : void
+*  This function checks the elements vs the expected 
+*  value of the elements
+*/
+    for(int ii = 0; ii < MAT_LEN; ii++){
+        CHECK(fabs(m(ii) - expected[ii]) < EPS); 
+    }
+}
+
+//==========================================================================//
+
+/* This is the collection of tests for the matrix class
+*  The test's name is in the SECTION arguments
+*/
+
+TEST_CASE("Matrices", "[mat]"){
+
+}
+
 
 
