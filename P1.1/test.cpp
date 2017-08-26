@@ -1132,23 +1132,168 @@ TEST_CASE("Matrices", "[mat]"){
     }
 
     SECTION("Transpose"){
-        //
+        // We are gonna try just a few cases
+        //zero matrix
+        matf ma_f; 
+        matd mb_d;
+        
+        matf ma_f_T = ma_f.transpose();
+        matd ma_d_T = mb_d.transpose();
+        // can't use comparison operator
+        // that hasn't been checked yet
+        for(int ii = 0; ii < MAT_H; ii++){
+            for(int jj = 0; jj < MAT_W; jj++){
+                CHECK(ma_f(ii, jj)  == 0);
+                CHECK(mb_d(ii, jj) == 0);
+            }
+        }
+
+        //Some known matrix
+        matf mc_f(1,  2,  3,  4,
+                  5,  6,  7,  8,
+                  9,  10, 11, 12,
+                  13, 14, 15, 16);
+
+        matd md_d(1,  2,  3,  4,
+                  5,  6,  7,  8,
+                  9,  10, 11, 12,
+                  13, 14, 15, 16);
+
+        float expected_f[16] = {1, 5, 9,  13,
+                                2, 6, 10,  14,
+                                3, 7, 11, 15, 
+                                4, 8, 12, 16};
+
+        double expected_d[16] = {1, 5,  9,  13,
+                                 2, 6,  10,  14,
+                                 3, 7,  11, 15, 
+                                 4, 8 , 12, 16};
+
+        check_mat(mc_f.transpose(), expected_f);
+        check_mat(md_d.transpose(), expected_d);
+
     }
 
     SECTION("Operator +"){
-        //
+        // floats
+        for(int kk = 0; kk < 100; kk++){
+            matf m1 = rand_matf(), m2 = rand_matf(), a_matf;
+            float expected[16];
+            a_matf = m1 + m2;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) + m2(ii, jj);
+                }
+            }
+            check_mat(a_matf, expected);
+        }
+
+        // doubles
+        for(int kk = 0; kk < 100; kk++){
+            matd m1 = rand_matd(), m2 = rand_matd(), a_matd;
+            double expected[16];
+            a_matd = m1 + m2;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) + m2(ii, jj);
+                }
+            }
+            check_mat(a_matd, expected);
+        }
+
     }
 
     SECTION("Operator -(other)"){
-        //
+        // floats
+        for(int kk = 0; kk < 100; kk++){
+            matf m1 = rand_matf(), m2 = rand_matf(), a_matf;
+            float expected[16];
+            a_matf = m1 - m2;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) - m2(ii, jj);
+                }
+            }
+            check_mat(a_matf, expected);
+        }
+
+        // doubles
+        for(int kk = 0; kk < 100; kk++){
+            matd m1 = rand_matd(), m2 = rand_matd(), a_matd;
+            double expected[16];
+            a_matd = m1 - m2;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) - m2(ii, jj);
+                }
+            }
+            check_mat(a_matd, expected);
+        }
     }
 
-    SECTION("Operator *"){
-        //
+    SECTION("Operator *(scalar"){
+        // floats
+        for(int kk = 0; kk < 100; kk++){
+            matf m1 = rand_matf(), m2_f;
+            float scalar = rand_f();
+            float expected[16];
+            m2_f = m1 * scalar;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) * scalar;
+                }
+            }
+            check_mat(m2_f, expected);
+        }
+
+        // doubles
+        for(int kk = 0; kk < 100; kk++){
+            matd m1 = rand_matd(), m2_d;
+            double scalar = rand_f();
+            double expected[16];
+            m2_d = m1 * scalar;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) * scalar;
+                }
+            }
+            check_mat(m2_d, expected);
+        }
     }
 
     SECTION("Operator -(void)"){
-        //
+        for(int kk = 0; kk < 100; kk++){
+            matf m1 = rand_matf(), m2_f;
+            float expected[16];
+            m2_f = -m1;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = -m1(ii, jj);
+                }
+            }
+            check_mat(m2_f, expected);
+        }
+
+        // doubles
+        for(int kk = 0; kk < 100; kk++){
+            matd m1 = rand_matd(), m2_d;
+            double expected[16];
+            m2_d = -m1;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = -m1(ii, jj);
+                }
+            }
+            check_mat(m2_d, expected);
+        }
     }
 
     SECTION("Operator +="){
@@ -1175,24 +1320,102 @@ TEST_CASE("Matrices", "[mat]"){
         //
     }
 
-    SECTION("Operator *(scalar"){
-        //
+    SECTION("Operator /(scalar"){
+        // floats
+        for(int kk = 0; kk < 100; kk++){
+            matf m1 = rand_matf(), m2_f;
+            float scalar = rand_f();
+            float expected[16];
+            m2_f = m1 / scalar;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) / scalar;
+                }
+            }
+            check_mat(m2_f, expected);
+        }
+
+        // doubles
+        for(int kk = 0; kk < 100; kk++){
+            matd m1 = rand_matd(), m2_d;
+            double scalar = rand_f();
+            double expected[16];
+            m2_d = m1 / scalar;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) / scalar;
+                }
+            }
+            check_mat(m2_d, expected);
+        }
     }
 
-    SECTION("Operator /(scalar"){
-        //
-    }
 
     SECTION("Operator =(other)"){
-        //
+        // floats
+        for(int kk = 0; kk < 100; kk++){
+            matf m1 = rand_matf(), m2_f;
+            float expected[16];
+            m2_f = m1;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj);
+                }
+            }
+            check_mat(m2_f, expected);
+        }
+
+        // doubles
+        for(int kk = 0; kk < 100; kk++){
+            matd m1 = rand_matd(), m2_d;
+            double expected[16];
+            m2_d = m1;
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj);
+                }
+            }
+            check_mat(m2_d, expected);
+        }
     }
 
     SECTION("Operator ==(other)"){
-        //
+        // all matrices must be equal to themselves
+        for(int ii = 0; ii < 100; ii++){
+            matf m = rand_matf(), a_matf;
+            a_matf = m;
+            CHECK((a_matf == m) == true); // the comparison of a, m should yield true
+        }
+
+        for(int ii = 0; ii < 100; ii++){
+            matd m = rand_matd(), a_matd;
+            a_matd = m;
+            CHECK((a_matd == m) == true); // the comparison of a, m should yield true
+        }
     }
 
     SECTION("Operator !=(other)"){
-        //
+        //floats
+        for(int ii = 0; ii < 100; ii++){
+            matf m = rand_matf(), a_matf;
+            a_matf = m;
+            // randomly perturb the values of a_vecf
+            a_matf(ii % 4, ii % 4) = a_matf(ii % 4, ii %4) + rand_f();
+            CHECK((a_matf != m) == true); 
+        }
+
+        //doubles
+        for(int ii = 0; ii < 100; ii++){
+            matd m = rand_matd(), a_matd;
+            a_matd = m;
+            // randomly perturb the values of a_vecd
+            a_matd(ii % 4, ii % 4) = a_matd(ii % 4, ii %4) + rand_d();
+            CHECK((a_matd != m) == true); 
+        }
     }
 }
 
