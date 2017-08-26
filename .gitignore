@@ -1,4 +1,14 @@
+# This file itself
+.gitignore
+
+# compiled files
 *.out
-*.json
-P1.1/.vscode/
-P1.1/a.out
+
+# config files for IDES beginning with .
+.*
+
+# Compiled Object files
+*.o
+
+# executables
+P1.1/test
