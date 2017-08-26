@@ -170,11 +170,11 @@ void mat<T>::identity(void) {
 template<class T>
 mat<T> mat<T>::transpose(void) const {
 	// TODO -- compute the transpose of this matrix in a new matrix and return.
-	// interchanging the indices should do the trick
+	//ust switch indices so that a_{i,j} becomes a_{j,i}
 	mat<T> temp;
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
-			temp(ii, jj) = (*this)(jj, ii);
+			temp(ii, jj) = (*this)(jj, ii); 
 		}
 	}	
 	return temp; // do not replace this line
@@ -205,10 +205,17 @@ mat<T> mat<T>::operator-(const mat<T>& other) const {
 }
 
 template<class T>
-mat<T> mat<T>::operator*(const mat<T>& other) const {
+mat<T> mat<T>::operator*(const mat<T>& other) const{
 	// TODO -- compute a new matrix (*this) * other, return the new matrix
-
-	return mat<T>(); // replace this line
+	mat<T> temp;
+	for (int ii = 0; ii < 4; ii++) {
+        for(int jj = 0; jj < 4; jj++) {
+            for(int kk = 0; kk < 4; kk++) {
+                temp(ii, jj) += (*this)(ii, kk) * other(kk, ii);
+			}
+		}
+	}
+	return temp; // do not replace this line
 }
 
 template<class T>
@@ -249,7 +256,9 @@ template<class T>
 const mat<T>& mat<T>::operator*=(const mat<T>& other) {
 	// TODO -- replace this matrix by (*this) * other. Make sure you do not overwrite elements that you still need.
 	//		   You may use mat<T>::operator*()
-
+	mat<T> temp;
+	temp = (*this) * other;
+	this = &temp;
 	return *this;
 }
 
@@ -258,7 +267,6 @@ vec<T> mat<T>::operator*(const vec<T>& v) {
 	// TODO -- compute the matrix-vector product (*this) * v^T and return the result
 	vec<T> temp;
 	// ii is the iterator for the index of result
-	// jj is the iterator for the running sum
 	for(int ii = 0; ii < 4; ii++){
 		// create a vector from the row ii. Dot product with the RHS vector.
 		// we get the iith element of the result
@@ -373,7 +381,7 @@ mat<T>::operator const T*(void) const {
 }
 
 template<class T>
-mat<T>::operator T*(void) {
+mat<T>::operator T*(void){
 	return m_data;
 }
 

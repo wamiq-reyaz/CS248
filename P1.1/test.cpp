@@ -1174,7 +1174,7 @@ TEST_CASE("Matrices", "[mat]"){
 
     }
 
-    SECTION("Operator +"){
+    SECTION("Operator +(other)"){
         // floats
         for(int kk = 0; kk < 100; kk++){
             matf m1 = rand_matf(), m2 = rand_matf(), a_matf;
@@ -1202,7 +1202,6 @@ TEST_CASE("Matrices", "[mat]"){
             }
             check_mat(a_matd, expected);
         }
-
     }
 
     SECTION("Operator -(other)"){
@@ -1297,27 +1296,233 @@ TEST_CASE("Matrices", "[mat]"){
     }
 
     SECTION("Operator +="){
-        //
+        // floats
+        for(int kk = 0; kk < 100; kk++){
+            matf m1 = rand_matf(), m2 = rand_matf();
+            float expected[16];
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) + m2(ii, jj);
+                }
+            }
+            m1 += m2;
+
+            check_mat(m1, expected);
+        }
+
+        // doubles
+        for(int kk = 0; kk < 100; kk++){
+            matd m1 = rand_matd(), m2 = rand_matd();
+            double expected[16];
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) + m2(ii, jj);
+                }
+            }
+            m1 += m2;
+
+            check_mat(m1, expected);
+        }
     }
 
-    SECTION("Operator -="){
-        //
+    SECTION("Operator -=(other)"){
+        // floats
+        for(int kk = 0; kk < 100; kk++){
+            matf m1 = rand_matf(), m2 = rand_matf();
+            float expected[16];
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) - m2(ii, jj);
+                }
+            }
+            m1 -= m2;
+
+            check_mat(m1, expected);
+        }
+
+        // doubles
+        for(int kk = 0; kk < 100; kk++){
+            matd m1 = rand_matd(), m2 = rand_matd();
+            double expected[16];
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) - m2(ii, jj);
+                }
+            }
+            m1 -= m2;
+
+            check_mat(m1, expected);
+        }
     }
 
     SECTION("Operator *="){
-        //
+        
     }
 
     SECTION("Operator *(vec)"){
-        //
+        // We use the property that k(Iv) = kv. k is a real number
+        // I the identity matrix
+        for(int kk = 0; kk < 100; kk++){
+            //floats
+            matf I(1,0,0,0,
+                0,1,0,0,
+                0,0,1,0,
+                0,0,0,1);
+         
+            float k = rand_f();
+    
+            vecf v = rand_vecf();
+            vecf ans = v * k;
+    
+            float expected[4]; // answer is a vector
+            for(int ii = 0; ii < 4; ii++){
+                expected[ii] = k * v(ii);
+            }
+    
+            check(ans, expected);
+            }
+            //doubles
+            matd I(1,0,0,0,
+                0,1,0,0,
+                0,0,1,0,
+                0,0,0,1);
+         
+            double k = rand_d();
+    
+            vecd v = rand_vecd();
+            vecd ans = v * k;
+    
+            double expected[4]; // answer is a vector
+            for(int ii = 0; ii < 4; ii++){
+                expected[ii] = k * v(ii);
+            }
+    
+            check(ans, expected);
+    }
+
+    SECTION("Operator ==(other)"){
+        // all matrices must be equal to themselves
+        for(int ii = 0; ii < 100; ii++){
+            matf m = rand_matf(), a_matf;
+            a_matf = m;
+            CHECK((a_matf == m) == true); // the comparison of a, m should yield true
+        }
+
+        for(int ii = 0; ii < 100; ii++){
+            matd m = rand_matd(), a_matd;
+            a_matd = m;
+            CHECK((a_matd == m) == true); // the comparison of a, m should yield true
+        }
+    }
+
+    SECTION("Operator *(other)"){
+        /* We test against a known matrix multiplication
+        * The rest is done using associativity(AB)C = A(BC)
+        * and identity property IA = A; 
+        */
+
+        SECTION("Known result"){
+            // matf a(0.5, 3.5, 2, 1,
+            //        1.6, -0.5, 6, 8,
+            //        7, 230.56, 88, 96.96,
+            //        840.26, -444, 26, 10);
+
+            // matf b(10.1, 20.1, 23,
+            //        25.6, 25.9, 25.9, 15.9,
+            //        75.9, 586.9, 254.9, 21.0,
+            //        -99.99, 0.96, 0.001, 0.1);
+
+            // // we now use matrix equality, as that has been already 
+            // // checked
+            // matf result(146.46, 1275.46, 611.951, 103.75,
+            //             -341.16, 3548.29, 1553.258, 138.05,
+            //             2957.2056, 57852.4856, 28563.80096, 5607.6,
+            //             -1906.274, 20658.626, 14453.79, 3570.52);
+
+            // matf c = a * b;
+            // std::cout << c;
+
+            // const matf id(1,0,0,0,  
+            //               0,1,0,0,
+            //               0,0,1,0,
+            //               0,0,0,1);
+
+            // matf d = id * 1;
+            // std::cout << d;
+            // CHECK((d == id) == true);
+        }
     }
 
     SECTION("Operator *=(scalar"){
-        //
+        // floats
+        for(int kk = 0; kk < 100; kk++){
+            matf m1 = rand_matf();
+            float scalar = rand_f();
+            float expected[16];
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) * scalar;
+                }
+            }
+            m1 *= scalar;
+
+            check_mat(m1, expected);
+        }
+
+        // doubles
+        for(int kk = 0; kk < 100; kk++){
+            matd m1 = rand_matd();
+            double scalar = rand_f();
+            double expected[16];
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) * scalar;
+                }
+            }
+            m1 *= scalar;
+
+            check_mat(m1, expected);
+        }
     }
 
     SECTION("Operator /=(scalar"){
-        //
+        // floats
+        for(int kk = 0; kk < 100; kk++){
+            matf m1 = rand_matf();
+            float scalar = rand_f();
+            float expected[16];
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) / scalar;
+                }
+            }
+            m1 /= scalar;
+
+            check_mat(m1, expected);
+        }
+
+        // doubles
+        for(int kk = 0; kk < 100; kk++){
+            matd m1 = rand_matd();
+            double scalar = rand_f();
+            double expected[16];
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    expected[4 * ii +jj] = m1(ii, jj) / scalar;
+                }
+            }
+            m1 /= scalar;
+
+            check_mat(m1, expected);
+        }
     }
 
     SECTION("Operator /(scalar"){
@@ -1352,7 +1557,6 @@ TEST_CASE("Matrices", "[mat]"){
         }
     }
 
-
     SECTION("Operator =(other)"){
         // floats
         for(int kk = 0; kk < 100; kk++){
@@ -1383,21 +1587,6 @@ TEST_CASE("Matrices", "[mat]"){
         }
     }
 
-    SECTION("Operator ==(other)"){
-        // all matrices must be equal to themselves
-        for(int ii = 0; ii < 100; ii++){
-            matf m = rand_matf(), a_matf;
-            a_matf = m;
-            CHECK((a_matf == m) == true); // the comparison of a, m should yield true
-        }
-
-        for(int ii = 0; ii < 100; ii++){
-            matd m = rand_matd(), a_matd;
-            a_matd = m;
-            CHECK((a_matd == m) == true); // the comparison of a, m should yield true
-        }
-    }
-
     SECTION("Operator !=(other)"){
         //floats
         for(int ii = 0; ii < 100; ii++){
@@ -1418,6 +1607,3 @@ TEST_CASE("Matrices", "[mat]"){
         }
     }
 }
-
-
-
