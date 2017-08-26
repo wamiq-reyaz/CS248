@@ -1359,8 +1359,20 @@ TEST_CASE("Matrices", "[mat]"){
         }
     }
 
-    SECTION("Operator *="){
-        
+    SECTION("Operator *=(other)"){
+        matf a(0,1,2,3,
+               4,5,6,7,
+               8,9,10,11,
+               12,13,14,15);
+
+        matf b(56, 62, 68, 74,
+               152, 174, 196, 218,
+               248, 286, 324, 362,
+               344, 398, 452, 506);
+
+        a *= a;
+
+        CHECK((a == b) == true);
     }
 
     SECTION("Operator *(vec)"){
