@@ -16,8 +16,10 @@ const float EPS = 1e-5;
 // Vector Length
 const int VEC_LEN = 4;
 
-// Matrix Length
-const int MAT_LEN = 16;
+// Matrix dim
+const int MAT_H = 4; //height
+const int MAT_W = 4; //width
+const int MAT_LEN = MAT_H * MAT_W;
 
 //===================================================================//
 
@@ -33,6 +35,7 @@ vecf rand_vecf(void){
 */
     float a[4]; // elements are floats
     for(int ii = 0; ii < VEC_LEN; ii++){
+        //
         a[ii] = LO + static_cast<float> (rand() /
                             static_cast<float>(RAND_MAX / (HI - LO))); // TODO insert SE link
     }
@@ -123,13 +126,10 @@ TEST_CASE("Vectors", "[vec]"){
         vecf vf_init_default; // by default all elements should be zero
         vecd vd_init_default;
 
-        CHECK(&vf_init_default != NULL);
-        CHECK(&vd_init_default != NULL);
-
         SECTION("Zero initialization")
         // test that the 4 elements are zero
         for(int ii = 0; ii < VEC_LEN; ii++){
-            CHECK(vd_init_default(ii) == 0);
+            CHECK(vf_init_default(ii) == 0);
             CHECK(vd_init_default(ii) == 0);
         }
     }   
@@ -139,17 +139,14 @@ TEST_CASE("Vectors", "[vec]"){
         vecf vf_init_1(1); // just populate first element with 1
         vecd vd_init_1(1);
 
-        CHECK(&vf_init_1 != NULL);
-        CHECK(&vd_init_1 != NULL);
-
         SECTION("First Element Intialization")
         // test that the first element is 1
-        CHECK(vd_init_1(0) == 1);
+        CHECK(vf_init_1(0) == 1);
         CHECK(vd_init_1(0) == 1);
 
         // and the rest of the elements are 0
         for(int ii = 1; ii < VEC_LEN; ii++){
-            CHECK(vd_init_1(ii) == 0);
+            CHECK(vf_init_1(ii) == 0);
             CHECK(vd_init_1(ii) == 0);
         }   
 
@@ -158,7 +155,7 @@ TEST_CASE("Vectors", "[vec]"){
         vecd vd_init_1_2_3_4(1, 2, 3, 4);
 
         for(int ii = 0; ii < VEC_LEN; ii++){
-            CHECK(vd_init_1_2_3_4(ii) == ii + 1); // ii goes from 0 to 3
+            CHECK(vf_init_1_2_3_4(ii) == ii + 1); // ii goes from 0 to 3
             CHECK(vd_init_1_2_3_4(ii) == ii + 1); // so add 1
         }
     }
@@ -170,9 +167,6 @@ TEST_CASE("Vectors", "[vec]"){
         // create vector that copies vx_init_1_2_3_4
         vecf vf_copy(vf_init_1_2_3_4); 
         vecd vd_copy(vd_init_1_2_3_4);
-
-        CHECK(&vf_init_1_2_3_4 != NULL);
-        CHECK(&vd_init_1_2_3_4 != NULL);
 
         // test that the elements in the two vectors are equal
         for(int ii = 0; ii < VEC_LEN; ii++){
@@ -1016,8 +1010,10 @@ inline void check_mat(mat<T> m, T expected[]){
 *  This function checks the elements vs the expected 
 *  value of the elements
 */
-    for(int ii = 0; ii < MAT_LEN; ii++){
-        CHECK(fabs(m(ii) - expected[ii]) < EPS); 
+    for(int ii = 0; ii < MAT_H; ii++){
+        for(int jj = 0; jj < MAT_W; jj++){
+            CHECK(fabs(m(ii, jj) - expected[4* ii + jj]) < EPS);
+        } 
     }
 }
 
@@ -1028,7 +1024,155 @@ inline void check_mat(mat<T> m, T expected[]){
 */
 
 TEST_CASE("Matrices", "[mat]"){
+    //seed for the PRNG
+    srand(time(NULL));
 
+    SECTION("Constructor"){
+        SECTION("Default Constructor"){
+            matf mf_init_default; // zero elements
+            matd md_init_default;   
+            
+            // test that the 16 elements are zero
+            for(int ii = 0; ii < MAT_H; ii++){ // ii runs along height
+                for(int jj = 0; jj < MAT_W; jj++){ // jj width
+                    CHECK(mf_init_default(ii, jj) == 0);
+                    CHECK(md_init_default(ii, jj) == 0);
+                }
+            }
+        }
+    
+        SECTION("General Constructor"){
+            matf mf_init_1(1);
+            matd md_init_1(1);
+
+            CHECK(mf_init_1(0, 0) == 1);
+            CHECK(md_init_1(0, 0) == 1);
+
+            // rest of the elements should be zero
+            for(int ii = 1; ii < MAT_H; ii++){ // indices begin from 1
+                for(int jj = 1; jj < MAT_W; jj++){
+                    CHECK(mf_init_1(ii, jj) == 0);
+                    CHECK(md_init_1(ii, jj) == 0);
+                }
+            }
+
+            // check for full length
+            matf ma_f(0,  1,  2,  3,
+                      4,  5,  6,  7,
+                      8,  9,  10, 11,
+                      12, 13, 14, 15);
+
+            matd mb_d(0,  1,  2,  3,
+                      4,  5,  6,  7,
+                      8,  9,  10, 11,
+                      12, 13, 14, 15);
+
+            for(int ii = 0; ii < MAT_H; ii++){
+                for(int jj = 0; jj < MAT_W; jj++){
+                    CHECK(ma_f(ii, jj) == float(4* ii + jj));
+                    CHECK(mb_d(ii, jj) == double(4* ii + jj));
+                }
+            }
+        }
+    
+        SECTION("Copy Constructor"){
+            /* We initialize random matrices and check whether copied
+            *  are equal to the original matrix
+            */
+            for(int kk = 0; kk < 100; kk++){
+                // create random matrices
+                matf ma_f = rand_matf();
+                matd mb_d = rand_matd();
+
+                // these values are expected
+                float expected_f[MAT_LEN];
+                double expected_d[MAT_LEN];
+
+                for(int ii = 0; ii < MAT_H; ii++){
+                    for(int jj = 0; jj < MAT_W; jj++){
+                        expected_f[ii*4 + jj] = ma_f(ii, jj);
+                        expected_d[ii*4 + jj] = mb_d(ii, jj);
+                    }
+                }
+
+                // fill new matrices 
+                matf ma_f_copy(ma_f);
+                matd mb_d_copy(mb_d);              
+
+                // check they are equal
+                check_mat(ma_f_copy, expected_f);
+                check_mat(mb_d_copy, expected_d);
+            }
+        }
+    }
+
+    SECTION("Identity"){
+        //
+    }
+
+    SECTION("Transpose"){
+        //
+    }
+
+    SECTION("Operator +"){
+        //
+    }
+
+    SECTION("Operator -(other)"){
+        //
+    }
+
+    SECTION("Operator *"){
+        //
+    }
+
+    SECTION("Operator -(void)"){
+        //
+    }
+
+    SECTION("Operator +="){
+        //
+    }
+
+    SECTION("Operator -="){
+        //
+    }
+
+    SECTION("Operator *="){
+        //
+    }
+
+    SECTION("Operator *(vec)"){
+        //
+    }
+
+    SECTION("Operator *=(scalar"){
+        //
+    }
+
+    SECTION("Operator /=(scalar"){
+        //
+    }
+
+    SECTION("Operator *(scalar"){
+        //
+    }
+
+    SECTION("Operator /(scalar"){
+        //
+    }
+
+    SECTION("Operator =(other)"){
+        //
+    }
+
+    SECTION("Operator ==(other)"){
+        //
+    }
+
+    SECTION("Operator !=(other)"){
+        //
+    }
 }
 
 

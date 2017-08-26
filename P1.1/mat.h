@@ -255,7 +255,7 @@ const mat<T>& mat<T>::operator*=(const mat<T>& other) {
 
 template<class T>
 vec<T> mat<T>::operator*(const vec<T>& v) {
-	// TODO -- compute the matrix-vector product (*this) * v and return the result
+	// TODO -- compute the matrix-vector product (*this) * v^T and return the result
 	vec<T> temp;
 	// ii is the iterator for the index of result
 	// jj is the iterator for the running sum
