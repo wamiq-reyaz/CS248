@@ -14,4 +14,6 @@ Simply include ```mat.h``` and ```vec.h``` and you're ready to rock and roll
 
 To compile, use 
 
-~~~~ make test && ./test ~~~~
+```bash
+ make test && ./test 
+```
