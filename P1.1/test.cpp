@@ -73,16 +73,17 @@ double rand_d(void){
 
 template<class T>
 // inline helps get the line number during testing
-inline void check(vec<T> v, T expected[]){ 
+inline void check_vec(vec<T> v, T expected[]){ 
 /* Args: vec<T> v, the vector to be checked
 *         T expected[], the expected element values
 *  Return : void
 *  This function checks the elements vs the expected 
 *  value of the elements
-*/
-    for(int ii = 0; ii < VEC_LEN; ii++){
-        CHECK(fabs(v(ii) - expected[ii]) < EPS); 
-    }
+*/  
+
+        for(int ii = 0; ii < VEC_LEN; ii++){
+            CHECK(fabs(v(ii) - expected[ii]) < EPS); 
+        }
 }
 
 /* helper functions for looping over arrays of 
@@ -119,7 +120,7 @@ void test_length(vec<T> v, T length_array[]){
 
 TEST_CASE("Vectors", "[vec]"){
     //seed for the PRNG
-    srand(time(NULL));
+    srand(time(0));
 
     SECTION("Default Constructor"){
         // init some vectors needed for testing
@@ -341,7 +342,7 @@ TEST_CASE("Vectors", "[vec]"){
             vecf v = rand_vecf(), a_vecf;
             float expected[4]; // intialized to zero
             a_vecf = v * 0;
-            check(a_vecf , expected);
+            check_vec(a_vecf , expected);
         }
 
         // zero double 
@@ -349,7 +350,7 @@ TEST_CASE("Vectors", "[vec]"){
             vecd v = rand_vecd(), a_vecd;
             double expected[4]; // intialized to zero
             a_vecd = v * 0;
-            check(a_vecd , expected);
+            check_vec(a_vecd , expected);
         }
 
         SECTION("Negative floats")
@@ -363,7 +364,7 @@ TEST_CASE("Vectors", "[vec]"){
             for(int jj = 0; jj < 4; jj++){
                 expected[jj] = v(jj) * -randf;
             }
-            check(a_vecf , expected);
+            check_vec(a_vecf , expected);
         }
 
         SECTION("Postive floats")
@@ -377,7 +378,7 @@ TEST_CASE("Vectors", "[vec]"){
             for(int jj = 0; jj < 4; jj++){
                 expected[jj] = v(jj) * randf;
             }
-            check(a_vecf , expected);
+            check_vec(a_vecf , expected);
         }
 
         SECTION("Negative doubles")
@@ -391,7 +392,7 @@ TEST_CASE("Vectors", "[vec]"){
             for(int jj = 0; jj < 4; jj++){
                 expected[jj] = v(jj) * -randd;
             }
-            check(a_vecd , expected);
+            check_vec(a_vecd , expected);
         }
 
         SECTION("Postive doubles")
@@ -405,7 +406,7 @@ TEST_CASE("Vectors", "[vec]"){
             for(int jj = 0; jj < 4; jj++){
                 expected[jj] = v(jj) * randd;
             }
-            check(a_vecd , expected);
+            check_vec(a_vecd , expected);
         }
     }
 
@@ -419,7 +420,7 @@ TEST_CASE("Vectors", "[vec]"){
             vecf v = rand_vecf(), a_vecf;
             float expected[4]; // intialized to zero
             a_vecf = v * 0;
-            check(a_vecf , expected);
+            check_vec(a_vecf , expected);
         }
 
         // zero double 
@@ -427,7 +428,7 @@ TEST_CASE("Vectors", "[vec]"){
             vecd v = rand_vecd(), a_vecd;
             double expected[4]; // intialized to zero
             a_vecd = v * 0;
-            check(a_vecd , expected);
+            check_vec(a_vecd , expected);
         }
 
         SECTION("Negative floats")
@@ -441,7 +442,7 @@ TEST_CASE("Vectors", "[vec]"){
             for(int jj = 0; jj < 4; jj++){
                 expected[jj] = v(jj) / -randf;
             }
-            check(a_vecf , expected);
+            check_vec(a_vecf , expected);
         }
 
         SECTION("Postive floats")
@@ -455,7 +456,7 @@ TEST_CASE("Vectors", "[vec]"){
             for(int jj = 0; jj < 4; jj++){
                 expected[jj] = v(jj) / randf;
             }
-            check(a_vecf , expected);
+            check_vec(a_vecf , expected);
         }
 
         SECTION("Negative doubles")
@@ -469,7 +470,7 @@ TEST_CASE("Vectors", "[vec]"){
             for(int jj = 0; jj < 4; jj++){
                 expected[jj] = v(jj) / -randd;
             }
-            check(a_vecd , expected);
+            check_vec(a_vecd , expected);
         }
 
         SECTION("Postive doubles")
@@ -483,7 +484,7 @@ TEST_CASE("Vectors", "[vec]"){
             for(int jj = 0; jj < 4; jj++){
                 expected[jj] = v(jj) / randd;
             }
-            check(a_vecd , expected);
+            check_vec(a_vecd , expected);
         }
     }
 
@@ -498,7 +499,7 @@ TEST_CASE("Vectors", "[vec]"){
             for(int jj = 0; jj < 4; jj++){
                 expected[jj] = v(jj);
             }
-            check(a_vecf, expected);
+            check_vec(a_vecf, expected);
         }
 
         for(int ii = 0; ii < 100; ii++){
@@ -511,7 +512,7 @@ TEST_CASE("Vectors", "[vec]"){
             for(int jj = 0; jj < 4; jj++){
                 expected[jj] = v(jj);
             }
-            check(a_vecd, expected);
+            check_vec(a_vecd, expected);
         }
     }
 
@@ -561,7 +562,7 @@ TEST_CASE("Vectors", "[vec]"){
                 expected[jj] = -v(jj);
             }
 
-            check(a_vecf, expected);
+            check_vec(a_vecf, expected);
         }
 
         //doubles
@@ -574,7 +575,7 @@ TEST_CASE("Vectors", "[vec]"){
                 expected[jj] = -v(jj);
             }
 
-            check(a_vecd, expected);
+            check_vec(a_vecd, expected);
         }
     }
     
@@ -589,7 +590,7 @@ TEST_CASE("Vectors", "[vec]"){
                 expected[jj] = v1(jj) + v2(jj);
             }
 
-            check(a_vecf, expected);
+            check_vec(a_vecf, expected);
         }
 
         //doubles
@@ -602,7 +603,7 @@ TEST_CASE("Vectors", "[vec]"){
                 expected[jj] = v1(jj) + v2(jj);
             }
 
-            check(a_vecd, expected);
+            check_vec(a_vecd, expected);
         }
     }
 
@@ -616,7 +617,7 @@ TEST_CASE("Vectors", "[vec]"){
             expected[jj] = v1(jj) - v2(jj);
         }
         
-        check(a_vecf, expected);
+        check_vec(a_vecf, expected);
 
         //doubles
         for(int ii = 0; ii < 100; ii++){
@@ -628,7 +629,7 @@ TEST_CASE("Vectors", "[vec]"){
                 expected[jj] = v1(jj) - v2(jj);
             }
 
-            check(a_vecd, expected);
+            check_vec(a_vecd, expected);
         }
     }
 
@@ -652,7 +653,7 @@ TEST_CASE("Vectors", "[vec]"){
 
             v1 += v2;        
 
-            check(v1, expected);
+            check_vec(v1, expected);
 
             //also check that v1 still is the same
             CHECK(&v1 == v1_orig_addr);
@@ -672,7 +673,7 @@ TEST_CASE("Vectors", "[vec]"){
 
             v1 += v2;        
 
-            check(v1, expected);
+            check_vec(v1, expected);
 
             //also check that v1 still is the same
             CHECK(&v1 == v1_orig_addr);
@@ -697,7 +698,7 @@ TEST_CASE("Vectors", "[vec]"){
 
             v1 *= a_f;        
 
-            check(v1, expected);
+            check_vec(v1, expected);
 
             //also check that v1 still is the same
             CHECK(&v1 == v1_orig_addr);
@@ -717,7 +718,7 @@ TEST_CASE("Vectors", "[vec]"){
 
             v1 *= a_d;        
 
-            check(v1, expected);
+            check_vec(v1, expected);
 
             //also check that v1 still is the same
             CHECK(&v1 == v1_orig_addr);
@@ -739,7 +740,7 @@ TEST_CASE("Vectors", "[vec]"){
 
             v1 -= v2;        
 
-            check(v1, expected);
+            check_vec(v1, expected);
 
             //also check that v1 still is the same
             CHECK(&v1 == v1_orig_addr);
@@ -759,7 +760,7 @@ TEST_CASE("Vectors", "[vec]"){
 
             v1 -= v2;        
 
-            check(v1, expected);
+            check_vec(v1, expected);
 
             //also check that v1 still is the same
             CHECK(&v1 == v1_orig_addr);
@@ -814,7 +815,6 @@ TEST_CASE("Vectors", "[vec]"){
 
         SECTION("Distributivity"){
             /* TODO: A lot of these tests fail because of floating point issues
-            * 
             */
             // float
             for(int ii = 0; ii < 100; ii++){
@@ -913,7 +913,7 @@ TEST_CASE("Vectors", "[vec]"){
         float expected[4] = {1,0,0,0};
         for(int ii =0; ii < 5; ii++){ // four possible options 0 - 4
             one.normalize(ii); // doing this does not change the vector
-            check(one, expected); // expected also remains constant throughout the loop
+            check_vec(one, expected); // expected also remains constant throughout the loop
         }
         
         //vec(1,1)
@@ -926,7 +926,7 @@ TEST_CASE("Vectors", "[vec]"){
         for(int ii = 0; ii < 5; ii++){
             vecf a(1,1);
             a.normalize(ii);
-            check(a, expected_1_1[ii]);
+            check_vec(a, expected_1_1[ii]);
         }
 
         //vec(1,1,1)       
@@ -939,7 +939,7 @@ TEST_CASE("Vectors", "[vec]"){
         for(int ii = 0; ii < 5; ii++){
             vecf b(1,1, 1);
             b.normalize(ii);
-            check(b, expected_1_1_1[ii]);
+            check_vec(b, expected_1_1_1[ii]);
         }
 
         //vec(1,1,1)       
@@ -952,7 +952,7 @@ TEST_CASE("Vectors", "[vec]"){
         for(int ii = 0; ii < 5; ii++){
         vecf c(1,1, 1, 1);
         c.normalize(ii);
-        check(c, expected_1_1_1_1[ii]);
+        check_vec(c, expected_1_1_1_1[ii]);
         }
         
     }
@@ -1025,7 +1025,7 @@ inline void check_mat(mat<T> m, T expected[]){
 
 TEST_CASE("Matrices", "[mat]"){
     //seed for the PRNG
-    srand(time(NULL));
+    srand(time(0));
 
     SECTION("Constructor"){
         SECTION("Default Constructor"){
@@ -1395,7 +1395,7 @@ TEST_CASE("Matrices", "[mat]"){
                 expected[ii] = k * v(ii);
             }
     
-            check(ans, expected);
+            check_vec(ans, expected);
             }
             //doubles
             matd I(1,0,0,0,
@@ -1413,7 +1413,7 @@ TEST_CASE("Matrices", "[mat]"){
                 expected[ii] = k * v(ii);
             }
     
-            check(ans, expected);
+            check_vec(ans, expected);
     }
 
     SECTION("Operator ==(other)"){
@@ -1433,39 +1433,51 @@ TEST_CASE("Matrices", "[mat]"){
 
     SECTION("Operator *(other)"){
         /* We test against a known matrix multiplication
-        * The rest is done using associativity(AB)C = A(BC)
-        * and identity property IA = A; 
+        *  identity property IA = A; 
         */
 
         SECTION("Known result"){
-            // matf a(0.5, 3.5, 2, 1,
-            //        1.6, -0.5, 6, 8,
-            //        7, 230.56, 88, 96.96,
-            //        840.26, -444, 26, 10);
+            matf a(0.5, 3.5, 2, 1,
+                   1.6, -0.5, 6, 8,
+                   7, 230.56, 88, 96.96,
+                   840.26, -444, 26, 10);
 
-            // matf b(10.1, 20.1, 23,
-            //        25.6, 25.9, 25.9, 15.9,
-            //        75.9, 586.9, 254.9, 21.0,
-            //        -99.99, 0.96, 0.001, 0.1);
+            matf b(10.1, 20.1, 23, 25.6,
+                   25.6, 25.9, 25.9, 15.9,
+                   75.9, 586.9, 254.9, 21.0,
+                   -99.99, 0.96, 0.001, 0.1);
 
-            // // we now use matrix equality, as that has been already 
-            // // checked
-            // matf result(146.46, 1275.46, 611.951, 103.75,
-            //             -341.16, 3548.29, 1553.258, 138.05,
-            //             2957.2056, 57852.4856, 28563.80096, 5607.6,
-            //             -1906.274, 20658.626, 14453.79, 3570.52);
+            // we now use matrix equality, as that has been already 
+            // checked
+            matf result(146.46, 1275.46, 611.951, 110.55,
+                        -341.16, 3548.29, 1553.258, 159.81,
+                        2957.2056, 57852.4856, 28563.80096, 5702.8,
+                        -1906.274, 20658.626, 14453.79, 14998.1);
 
-            // matf c = a * b;
-            // std::cout << c;
+            matf c = (const matf) a * b;            
+        }
 
-            // const matf id(1,0,0,0,  
-            //               0,1,0,0,
-            //               0,0,1,0,
-            //               0,0,0,1);
+        SECTION("Identity Property"){
+            // the identity matrix
+            matf id(1,0,0,0,  
+                0,1,0,0,
+                0,0,1,0,
+                0,0,0,1);
 
-            // matf d = id * 1;
-            // std::cout << d;
-            // CHECK((d == id) == true);
+            for(int ii = 0; ii < 100; ii++){
+                // gen random vectors for testing 
+                matf m1 = rand_matf();
+                matf m2 = m1;
+
+                m1 = (const matf) id * m1;
+
+                CHECK((m1 == m2 ) == true);
+            }
+           
+
+            matf random(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16);
+
+            matf d = (const matf) id * random;
         }
     }
 

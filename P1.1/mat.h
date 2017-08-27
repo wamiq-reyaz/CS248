@@ -74,7 +74,6 @@ mat<T> operator*(const S& scalar, const vec<T>& M) {
 
 template<class T>
 std::ostream& operator<<(std::ostream& out, const mat<T>& M) {
-	// TODO: output a matrix row-by-row to the "out" stream
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			out << M(ii, jj) << "	"; // print a row with space between elements
@@ -86,7 +85,6 @@ std::ostream& operator<<(std::ostream& out, const mat<T>& M) {
 
 template<class T>
 std::istream& operator>>(std::istream& in, mat<T>& M) {
-	// TODO: read a matrix row-by-row from the "in" stream
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			in >> M(ii, jj); 
@@ -99,7 +97,7 @@ std::istream& operator>>(std::istream& in, mat<T>& M) {
 
 template<class T>
 mat<T>::mat(void) {
-	// Arithmetic values are set to zero by default. BUt they usually have
+	// Arithmetic values are set to zero by default. But they usually have
 	// a small value 
 	for(int ii = 0; ii < 16; ii++){
 		m_data[ii] = T(0);
@@ -111,24 +109,23 @@ mat<T>::mat(const T& m00, const T& m01, const T& m02, const T& m03,
 			const T& m10, const T& m11, const T& m12, const T& m13,
 			const T& m20, const T& m21, const T& m22, const T& m23,
 			const T& m30, const T& m31, const T& m32, const T& m33) {
-	// TODO -- initialize m_data with the provided components.
-	//		!! USE operator() to access the elements of this matrix, e.g., (*this)(i,j) = x
-	// Row 1
+
+	// Column 1
 	(*this)(0,0) = m00;
 	(*this)(0,1) = m01;
 	(*this)(0,2) = m02;
 	(*this)(0,3) = m03;
-	// Row 2
+	// Column 2
 	(*this)(1,0) = m10;
 	(*this)(1,1) = m11;
 	(*this)(1,2) = m12;
 	(*this)(1,3) = m13;
-	// Row 3
+	// Column 3
 	(*this)(2,0) = m20;
 	(*this)(2,1) = m21;
 	(*this)(2,2) = m22;
 	(*this)(2,3) = m23;
-	// Row 4
+	// Column 4
 	(*this)(3,0) = m30;
 	(*this)(3,1) = m31;
 	(*this)(3,2) = m32;
@@ -137,7 +134,6 @@ mat<T>::mat(const T& m00, const T& m01, const T& m02, const T& m03,
 
 template<class T>
 mat<T>::mat(const mat<T>& other) {
-	// TODO -- copy other to (*this) component by component
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			(*this)(ii, jj) = other(ii, jj);
@@ -152,7 +148,6 @@ mat<T>::~mat(void) {
 
 template<class T>
 void mat<T>::identity(void) {
-	// TODO -- overwrite this matrix with an identity matrix.
 	// Imma do it the simple way. Use two iterators. IF ii==jj
 	// put in a 1
 	for(int ii = 0; ii < 4; ii++){
@@ -169,8 +164,7 @@ void mat<T>::identity(void) {
 
 template<class T>
 mat<T> mat<T>::transpose(void) const {
-	// TODO -- compute the transpose of this matrix in a new matrix and return.
-	//ust switch indices so that a_{i,j} becomes a_{j,i}
+	// just switch indices so that a_{i,j} becomes a_{j,i}
 	mat<T> temp;
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
@@ -182,45 +176,43 @@ mat<T> mat<T>::transpose(void) const {
 
 template<class T>
 mat<T> mat<T>::operator+(const mat<T>& other) const {
-	// TODO -- compute a new matrix (*this)+other, return the new matrix
 	mat<T> temp;
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			temp(ii, jj) = (*this)(ii, jj) + other(ii, jj);
 		}
 	}	
-	return temp; // do not replace this line
+	return temp; 
 }
 
 template<class T>
 mat<T> mat<T>::operator-(const mat<T>& other) const {
-	// TODO -- compute a new matrix (*this)-other, return the new matrix
 	mat<T> temp;
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			temp(ii, jj) = (*this)(ii, jj) - other(ii, jj);
 		}
 	}	
-	return temp; // do not replace this line
+	return temp; 
 }
 
 template<class T>
 mat<T> mat<T>::operator*(const mat<T>& other) const{
-	//TODO -- compute a new matrix (*this) * other, return the new matrix
 	mat<T> temp;
+	
 	for (int ii = 0; ii < 4; ii++) {
-        for(int jj = 0; jj < 4; jj++) {
+		for(int jj = 0; jj < 4; jj++) {
             for(int kk = 0; kk < 4; kk++) {
-                temp(ii, jj) += (*this)(ii, kk) * other(kk, ii);
+				// work in doubles for better accuracy
+                temp(ii, jj) += T(double((*this)(ii, kk)) * double((other)(kk, jj)));
 			}
 		}
 	}
-	return temp; // do not replace this line
+	return temp; 
 }
 
 template<class T>
 mat<T> mat<T>::operator-(void) const {
-	// TODO -- compute a new matrix -(*this), return the new matrix
 	mat<T> temp;
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
@@ -232,7 +224,6 @@ mat<T> mat<T>::operator-(void) const {
 
 template<class T>
 const mat<T>& mat<T>::operator+=(const mat<T>& other) {
-	// TODO -- add other to this matrix
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			(*this)(ii, jj) = (*this)(ii, jj) + other(ii, jj);
@@ -243,7 +234,6 @@ const mat<T>& mat<T>::operator+=(const mat<T>& other) {
 
 template<class T>
 const mat<T>& mat<T>::operator-=(const mat<T>& other) {
-	// TODO -- subtract other from this matrix
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			(*this)(ii, jj) = (*this)(ii, jj) - other(ii, jj);
@@ -254,8 +244,6 @@ const mat<T>& mat<T>::operator-=(const mat<T>& other) {
 
 template<class T>
 const mat<T>& mat<T>::operator*=(const mat<T>& other) {
-	// TODO -- replace this matrix by (*this) * other. Make sure you do not overwrite elements that you still need.
-	//		   You may use mat<T>::operator*()
 	mat<T> temp;
 	for (int ii = 0; ii < 4; ii++) {
         for(int jj = 0; jj < 4; jj++) {
@@ -274,7 +262,6 @@ const mat<T>& mat<T>::operator*=(const mat<T>& other) {
 
 template<class T>
 vec<T> mat<T>::operator*(const vec<T>& v) {
-	// TODO -- compute the matrix-vector product (*this) * v^T and return the result
 	vec<T> temp;
 	// ii is the iterator for the index of result
 	for(int ii = 0; ii < 4; ii++){
@@ -290,7 +277,6 @@ vec<T> mat<T>::operator*(const vec<T>& v) {
 template<class T>
 template<class S> 
 const mat<T>& mat<T>::operator*=(const S& scalar) {
-	// TODO -- multiply each matrix component by scalar. Don't forget to convert scalar to type T.
 	for (int ii = 0; ii < 16; ii++) // I am in the class. Im gonna use it
 	{
 		m_data[ii] *= T(scalar);
@@ -313,33 +299,30 @@ const mat<T>& mat<T>::operator/=(const S& scalar) {
 template<class T>
 template<class S> 
 mat<T> mat<T>::operator*(const S& scalar) {
-	// TODO -- compute a new matrix (*this) * scalar. Don't forget to convert scalar to type T.
 	mat<T> temp;
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			temp(ii, jj) = (*this)(ii, jj) * T(scalar);
 		}
 	}	
-	return temp; // do not replace this line
+	return temp; 
 }
 
 template<class T>
 template<class S> 
 mat<T> mat<T>::operator/(const S& scalar) {
 	assert("mat<T>::operator/ -- invalid argument" && T(scalar) != T(0));
-	// TODO -- divide each matrix component by scalar and store in a new matrix. return the new matrix. Don't forget to convert scalar to type T.
 	mat<T> temp;
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			temp(ii, jj) = (*this)(ii, jj) / T(scalar);
 		}
 	}	
-	return temp; // do not replace this line
+	return temp; 
 }
 
 template<class T>
 const mat<T>& mat<T>::operator=(const mat<T>& other) {
-	// TODO -- overwrite each component in this matrix by the matching component in other
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			(*this)(ii, jj) = other(ii, jj);
@@ -350,7 +333,6 @@ const mat<T>& mat<T>::operator=(const mat<T>& other) {
 
 template<class T>
 bool mat<T>::operator==(const mat<T>& other) const {
-	// TODO -- return true if each component of (*this) is equal to the matching component of other, false otherwise
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			if((*this)(ii, jj) != other(ii, jj)){
@@ -364,7 +346,6 @@ bool mat<T>::operator==(const mat<T>& other) const {
 
 template<class T>
 bool mat<T>::operator!=(const mat<T>& other) const {
-	// TODO -- return false if each component of (*this) is equal to the matching component of other, false otherwise
 	if(*this == other){
 		return false;
 	}
