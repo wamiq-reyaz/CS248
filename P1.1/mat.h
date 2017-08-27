@@ -206,7 +206,7 @@ mat<T> mat<T>::operator-(const mat<T>& other) const {
 
 template<class T>
 mat<T> mat<T>::operator*(const mat<T>& other) const{
-	// TODO -- compute a new matrix (*this) * other, return the new matrix
+	//TODO -- compute a new matrix (*this) * other, return the new matrix
 	mat<T> temp;
 	for (int ii = 0; ii < 4; ii++) {
         for(int jj = 0; jj < 4; jj++) {
@@ -257,8 +257,18 @@ const mat<T>& mat<T>::operator*=(const mat<T>& other) {
 	// TODO -- replace this matrix by (*this) * other. Make sure you do not overwrite elements that you still need.
 	//		   You may use mat<T>::operator*()
 	mat<T> temp;
-	temp = (*this) * other;
-	this = &temp;
+	for (int ii = 0; ii < 4; ii++) {
+        for(int jj = 0; jj < 4; jj++) {
+            for(int kk = 0; kk < 4; kk++) {
+                temp(ii, jj) += (*this)(ii, kk) * other(kk, jj);
+			}
+		}
+	}
+	for (int ii = 0; ii < 4; ii++) {
+        for(int jj = 0; jj < 4; jj++) {
+			(*this)(ii, jj) = temp(ii, jj);
+		}
+	}
 	return *this;
 }
 
