@@ -12,7 +12,7 @@ Simply include ```mat.h``` and ```vec.h``` and you're ready to rock and roll
 
 ## Testing
 
-To compile, use 
+To compile and test, use 
 
 ```bash
  make test && ./test 
