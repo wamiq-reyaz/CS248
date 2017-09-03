@@ -1,0 +1,28 @@
+// ============================== new in project P2.1 ==============================
+// Be prepared to answer what the static keyword does to the TA.
+static mat<T> Zero(void);
+static mat<T> Identity(void);
+
+// see https://www.opengl.org/documentation/specs/version2.0/glspec20.pdf
+static mat<T> Translation(const vec<T>& t);
+static mat<T> Rotation(const T& deg, const vec<T>& axis);
+static mat<T> Ortho(const T& l, const T& r, const T& b, const T& t, const T& n, const T& f);
+static mat<T> Frustum(const T& l, const T& r, const T& b, const T& t, const T& n, const T& f);
+static mat<T> Scale(const vec<T>& s);
+	
+// see https://www.opengl.org/wiki/
+static mat<T> Perspective(const T& fov, const T& aspect, const T& nplane, const T& fplane);
+static mat<T> Lookat(const vec<T>& eye, const vec<T>& center, const vec<T>& up);
+static mat<T> Crossproduct(const vec<T>& v);
+
+// quaternion to matrix
+// Don't forget to include quat.h in mat.h
+const mat<T>& operator=(const quat<T>& q);
+mat<T>(const quat<T>& q);
+
+// determinant and inverse
+T subdeterminant(size_t i, size_t j) const;
+T determinant(size_t i, size_t j) const;
+mat<T> adjoint(void) const;
+mat<T> inverse(T* det = NULL) const;
+mat<T> inverse_transpose(T* det = NULL) const;

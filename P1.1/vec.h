@@ -114,7 +114,6 @@ vec<T>::vec(const vec<T>& other) {
 template<class T>
 vec<T>::~vec(void) {
 	// nothing is done on the heap. No cleanup needed
-
 }
 
 template<class T>

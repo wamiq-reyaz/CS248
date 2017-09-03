@@ -1,5 +1,5 @@
 test: test.cpp
-  clang++ test.cpp -o test
+	clang++ test.cpp -o test
   
-clean:
-  rm *.o test
+clean: 
+	rm *.o test
