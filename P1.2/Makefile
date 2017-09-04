@@ -1,0 +1,11 @@
+CC=clang++
+CFLAGS=-std=c++11 -g
+
+all: mesh.o main.cpp
+	$(CC) $(CFLAGS) main.cpp mesh.o -o main
+
+mesh.o: mesh.cpp
+	$(CC) $(CFLAGS) -c mesh.cpp -o mesh.o
+
+clean:
+	rm -f *.o main

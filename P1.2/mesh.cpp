@@ -6,6 +6,8 @@
 #include<algorithm>
 #include<unordered_map>
 
+#define _DBG_MESH ;
+
 #ifdef _DEBUG
 size_t vertex_t::count = 0;
 size_t halfedge_t::count = 0;
@@ -18,12 +20,17 @@ size_t facet_t::count = 0;
 //			By convention, the smaller vertex index is stored in v1 and the larger one in v2.
 struct edge_t {	
 	edge_t(size_t _v1, size_t _v2) {
-		// TODO -- constructor. The smaller value of _v1,_v2 goes to v1, the larger to v2		
+		// TODO -- constructor. The smaller value of _v1,_v2 goes to v1, the larger to v2	
+		v1 = _v1 > _v2 ? _v2 : _v1; // one-liner instead of if-else
+		v2 = _v1 > _v2 ? _v1 : _v2;	// never gonna be = because then there is no edge
 	}
 	size_t v1, v2;	
 	bool operator==(const edge_t& other) const {
 		// TODO -- implement the comparison function. Two edges are identical if both their indices are identical.
-		return false; // TODO - replace this line
+		if(this->v1 == other.v1 && this->v2 == other.v2){
+			return true;
+		}
+		return false; // TODO
 	}
 };
 
@@ -32,7 +39,9 @@ namespace std {
 	template<>
 	struct hash<edge_t> {
 		std::size_t operator()(const edge_t& e) const {
-			return (std::size_t)(0); // TODO - replace this line. A pair (e.v1,e.v2) should result in a number that is likely to be different from (f.v1,f.v2) if e!=f.			
+			/* Use Fermats theorem. a^3 + b^3 = c^3 + d^3 has no solution in Z.
+			*/
+			return e.v1*e.v1*e.v1 + e.v2*e.v2*e.v2; // TODO - replace this line. A pair (e.v1,e.v2) should result in a number that is likely to be different from (f.v1,f.v2) if e!=f.			
 		}
 	};
 }
@@ -74,31 +83,82 @@ bool mesh_t::build_mesh(
 	// TASK 4a
 	std::vector<vertex_t* > vertex_list;
 	vertex_list.reserve(in_vertex.size());
+	// #ifdef _DBG_MESH
+	// 	std::cout << "Vertex SIZE " << in_vertex.size() << std::endl;
+	// 	std::cout << "Vertex LIST" << std::endl;
+	// #endif
 	for (size_t n = 0; n < in_vertex.size(); n++) {
 		// TODO - For each vertex, create a new vertex. Add this new vertex to the vertex_list. 
 		//        Then, fill the position and (if available) the texture coordinate.
 		
+		vertex_t *temp = new_vertex(); // add vertex to mesh, return pointer
+		vertex_list.push_back(temp); 
 
+		temp->position() = in_vertex[n];
+		if(m_texcoord){
+			temp->texcoord() = in_texcoord[n];
+		}
 
+		// #ifdef _DBG_MESH
+		// std::cout << vertex_list[n]->position() << std::endl;
+		// #endif // DEBUG
 	}
 	
-
 	// We'll keep track of the edges already visited in this list. They are not yet halfedges, so edge v1,v2 is the same as edge v2,v1
-	std::unordered_map<edge_t, halfedge_t* > edge_list;
+	std::unordered_map<edge_t, halfedge_t*> edge_list;
 
 
 	// TASK 4b
+	// #ifdef _DBG_MESH
+	// 	std::cout << "Facet SIZE " << in_facet.size() << std::endl;
+	// 	std::cout << "Facet LIST" << std::endl;
+	// #endif
+
 	for (size_t n = 0; n < in_facet.size(); n++) {
 
+		// #ifdef _DBG_MESH
+		// for (size_t m = 0; m < in_facet[n].size(); m++){
+		// 	std::cout << in_facet[n][m] << " ";
+		// }
+		// std::cout << std::endl;
+		// #endif // DEBUG
 		// Generate a new facet in the mesh.
+		facet_t *temp = new_facet();
 		// Keep track of the first, current, and previous halfedge generated for this face.
 		halfedge_t* first, curr, prev;
 
+		#ifdef _DBG_MESH
+		std::cout << "Facet: " << n << std::endl;
+		#endif // DEBUG
+
+		// generate edges from facet
+		size_t n_edges = in_facet[n].size();
+
+		#ifdef _DBG_MESH
+		std::cout << "Number of Edges " << n_edges << std::endl;
+		#endif // DEBUG
+
+		std::vector<edge_t> edge_list;
+		edge_list.reserve(n_edges);
+		for(size_t ii = 0; ii < n_edges; ii++){
+			size_t v1 = in_facet[n][ii];
+			size_t v2 = in_facet[n][ (ii+1) % n_edges ]; // to wrap around and get to zero for last vertex
+			edge_list.push_back(edge_t(v1, v2));
+
+			#ifdef _DBG_MESH
+			std::cout << v1 << " " << v2 << std::endl;
+			#endif // DEBUG
+		}
+		
+		
 		// TASK 4c: foreach edge
-			// locate edge in edge_list
-			// if edge not in edge_list
+			for(size_t ii = 0; ii < in_facet[n].size(); ii++){
+				// locate edge in edge_list
+				// if edge not in edge_list
 				// create opposite pair of halfedges, update pointers as per problem statement, keep track of first, curr, prev
 				// else keep track of first, curr, prev
+			}
+			
 
 			// update facet pointers
 			// update prev, next pointers of halfedge			

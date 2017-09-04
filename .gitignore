@@ -12,3 +12,6 @@
 
 # executables
 P1.1/test
+P1.2/main
+P1.1/.vscode/settings.json
+P1.1/.vscode/launch.json
