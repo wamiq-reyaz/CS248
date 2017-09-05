@@ -72,9 +72,11 @@ vec<T> operator*(const S& scalar, const vec<T>& v) {
 
 template<class T>
 std::ostream& operator<<(std::ostream& out, const vec<T>& v) {
+	out << "[ " ;
 	for(int ii = 0; ii < 4; ii++){
-		out << v(ii) << " ";
+		out << v(ii) << ", ";
 	}
+	out << "]" ;
 	return out;
 }
 
