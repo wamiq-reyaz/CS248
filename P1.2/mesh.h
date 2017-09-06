@@ -1,6 +1,8 @@
 #ifndef __MESH_H__
 #define __MESH_H__
 
+#define _DEBUG
+
 #include"vec.h"
 #include<list>
 #include<memory>
