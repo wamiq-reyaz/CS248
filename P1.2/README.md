@@ -3,7 +3,7 @@
 This is an implementation of the Half-Edge data structure.
 The code provides a simple interface to load `.obj` files and construct a mesh.
 
-## Use
+## Using
 
 Include `mesh.h` and link against `mesh.o`. Done.
 
@@ -16,3 +16,13 @@ make mesh
 ```
 
 and copy the `mesh.o` file to your favourite library storage.
+
+## Testing
+
+Just run
+
+```bash
+make && ./main 
+```
+
+This will run all tests by default.
