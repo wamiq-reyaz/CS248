@@ -22,7 +22,7 @@ and copy the `mesh.o` file to your favourite library storage.
 Just run
 
 ```bash
-make && ./main 
+make && ./test 
 ```
 
 This will run all tests by default.
