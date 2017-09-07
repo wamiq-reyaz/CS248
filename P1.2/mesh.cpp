@@ -27,7 +27,7 @@ struct edge_t {
         v2 = _v1 > _v2 ? _v1 : _v2; // never gonna be =
     }
     size_t v1, v2;
-    bool operator==(const edge_t &other) const {
+    bool operator==(const edge_t& other) const {
         // TODO -- implement the comparison function. Two edges are identical if
         // both their indices are identical.
         if (this->v1 == other.v1 && this->v2 == other.v2) {
@@ -41,7 +41,7 @@ struct edge_t {
 // std::unordered_map
 namespace std {
 template <> struct hash< edge_t > {
-    std::size_t operator()(const edge_t &e) const {
+    std::size_t operator()(const edge_t& e) const {
         /* Use Fermats theorem. a^3 + b^3 = c^3 + d^3 has no solution in Z.
         */
         return e.v1 * e.v1 * e.v1 + e.v2 * e.v2 * e.v2;
@@ -49,10 +49,10 @@ template <> struct hash< edge_t > {
 };
 }
 
-bool mesh_t::build_mesh(const std::vector< vecd > &in_vertex, /// input positions
-                        const std::vector< vecd > &in_texcoord, /// input texcoord, if any
-                        const std::vector< std::vector< size_t > >
-                            &in_facet // input facets, std::vector<size_t> per face
+bool mesh_t::build_mesh(const std::vector< vecd >& in_vertex, /// input positions
+                        const std::vector< vecd >& in_texcoord, /// input texcoord, if any
+                        const std::vector< std::vector< size_t > >&
+                            in_facet // input facets, std::vector<size_t> per face
                         ) {
     if (in_vertex.empty()) {
         std::cerr << "Error - mesh contains no vertices" << std::endl;
@@ -83,7 +83,7 @@ bool mesh_t::build_mesh(const std::vector< vecd > &in_vertex, /// input position
     clear();
 
     // TASK 4a
-    std::vector< vertex_t * > vertex_list;
+    std::vector< vertex_t* > vertex_list;
     vertex_list.reserve(in_vertex.size());
 
     for (size_t n = 0; n < in_vertex.size(); n++) {
@@ -91,7 +91,7 @@ bool mesh_t::build_mesh(const std::vector< vecd > &in_vertex, /// input position
         // the vertex_list.Then, fill the position and (if available) the texture
         // coordinate.
 
-        vertex_t *curr_vert = new_vertex(); // add vertex to mesh, return pointer
+        vertex_t* curr_vert = new_vertex(); // add vertex to mesh, return pointer
         vertex_list.push_back(curr_vert);
 
         curr_vert->position() = in_vertex[n];
@@ -102,14 +102,15 @@ bool mesh_t::build_mesh(const std::vector< vecd > &in_vertex, /// input position
 
     // We'll keep track of the edges already visited in this list. They are not
     // yet halfedges, so edge v1,v2 is the same as edge v2,v1
-    std::unordered_map< edge_t, halfedge_t * > edge_list;
+    std::unordered_map< edge_t, halfedge_t* > edge_list;
 
     for (size_t n = 0; n < in_facet.size(); n++) {
         // Generate a new facet in the mesh.
-        facet_t *curr_face = new_facet();
+        facet_t* curr_face = new_facet();
         // Keep track of the first, current, and previous halfedge generated for
         // this face.
         halfedge_t *first, *curr, *prev;
+        first = curr = prev = nullptr;
 
         // TASK 4c: foreach edge
         size_t n_edges = in_facet[n].size();
@@ -122,9 +123,9 @@ bool mesh_t::build_mesh(const std::vector< vecd > &in_vertex, /// input position
             halfedge_t *he_parallel, *he_anti_parallel;
             edge_t edge(v1, v2);
             // locate edge in edge_list
-            std::unordered_map< edge_t, halfedge_t * >::iterator got =
+            std::unordered_map< edge_t, halfedge_t* >::iterator map_it =
                 edge_list.find(edge);
-            if (got == edge_list.end()) {
+            if (map_it == edge_list.end()) {
                 // if edge not in edge_list
                 // create opposite pair of halfedges, update pointers as per
                 // problem statement, keep track of first, curr, prev
@@ -152,10 +153,10 @@ bool mesh_t::build_mesh(const std::vector< vecd > &in_vertex, /// input position
             } else {
                 // else keep track of first, curr, prev
                 if (ii == 0) {
-                    first = got->second;
+                    first = map_it->second;
                 }
                 prev = curr;
-                curr = got->second;
+                curr = map_it->second;
 
                 curr->facet() = curr_face;
             }
@@ -176,50 +177,119 @@ bool mesh_t::build_mesh(const std::vector< vecd > &in_vertex, /// input position
     }
 
     // TASK 5b establish prev, next for boundary halfedges
+    // TODO
+    halfedge_iterator he_it;
+    for (he_it = this->halfedge_begin(); he_it != this->halfedge_end(); he_it++){
+        halfedge_t* h = &(*he_it);
+        if(h->on_border()){
+            h->next() = h->next_around_vertex(); 
+            h->prev() = h->prev_around_vertex();
+        }
+    }
 
     vertex_list.clear();
+    edge_list.clear();
     return true;
 }
 
 // TASK 5a
-halfedge_t *halfedge_t::next_around_vertex(void) {
+halfedge_t* halfedge_t::next_around_vertex(void) {
     // TODO -- return next halfedge around the vertex of the halfedge
-    return nullptr; // TODO -- replace this line
+
+    // There can be no more than two boundary halfedges
+    // around a vertex. So the next one is unique 
+    // See: https://gist.github.com/wamiq-reyaz/604914d8626e2c7356d68f7933937445
+    
+    halfedge_t* h = this->opposite();
+    vertex_t* v = this->vertex();
+    do {
+        h = h->next();
+        if(h->vertex() == v){
+            h = h->opposite();
+        }
+    } while (!h->on_border());
+
+    return h; // TODO -- replace this line
 }
 
-halfedge_t *halfedge_t::prev_around_vertex(void) {
-    return nullptr; // TODO -- replace this line
+halfedge_t* halfedge_t::prev_around_vertex(void) {
+    halfedge_t* h = this->opposite();
+    vertex_t* v = h->vertex();
+    do {
+        h = h->next();
+        if(h->opposite()->vertex() == v){
+            h = h->opposite();
+        }
+    } while (!h->on_border());
+
+    return h; // TODO -- replace this line
 }
 
 // TASK 6
 size_t vertex_t::degree(void) const {
     // TODO -- compute the degree of this vertex and return it
-    return 0; // TODO -- replace this line
+    // just iterate over all edges, and keep count
+    size_t degree = 0;
+    halfedge_t* h = (halfedge_t*) this->halfedge();
+    do{
+        h = h->opposite()->next();
+        degree++;
+    }while(h != this->halfedge());
+
+    return degree; // TODO -- replace this line
 }
 
 bool vertex_t::on_border(void) const {
     // TODO -- return true if vertex is on a border, false otherwise
-    return 0; // TODO -- replace this line
+    halfedge_t* h = (halfedge_t*) this->halfedge();
+    do{
+        if(h->opposite()->on_border()){
+            return true;
+        }
+        h = h->opposite()->next();
+    }while(h != this->halfedge());
+
+    return false; // TODO -- replace this line
 }
 
 bool halfedge_t::on_border(void) const {
     // TODO -- return true if this halfedge is on a border
+    if (this->facet() == nullptr) {
+        return true;
+    }
     return false; // TODO -- replace this line
 }
 
 size_t facet_t::degree(void) const {
     // TODO -- compute the degree of this facet and return, i.e., return 3 for a
     // triangle, 4 for a quadrilateral
-    return 0; // TODO -- replace this line
+    size_t degree = 0;
+    halfedge_t* h = (halfedge_t*) this->halfedge();
+    do{
+        h = h->next();
+        degree++;
+    }while(h != this->halfedge());
+    return degree; // TODO -- replace this line
 }
 
 bool facet_t::on_border(void) const {
     // TODO -- return true if the facet is on a border, false otherwise
+    halfedge_t* h = (halfedge_t*) this->halfedge();
+    do{
+        h = h->next();
+        if(h->opposite()->on_border()){
+            return true;
+        }
+    }while(h != this->halfedge());
+
     return false; // TODO -- replace this line
 }
 
 bool facet_t::is_triangle(void) const {
     // TODO -- return true if the facet is a triangle, false otherwise
+    if(this->degree() == 3){
+        return true;
+    }
     return false; // TODO -- replace this line
 }
 
@@ -238,16 +308,16 @@ void mesh_t::dbgdump(void) {
     std::cout << "FACETS" << std::endl;
     for (facet_const_iterator it = facet_cbegin(); it != facet_cend(); it++) {
         int h = (it->halfedge() != nullptr ? int(it->halfedge()->id) : (-1));
-        const vecd &N(it->normal());
+        const vecd& N(it->normal());
         std::cout << "  F" << it->id << ": h=" << h << ", N=" << N << std::endl;
     }
     std::cout << "VERTICES" << std::endl;
     for (vertex_const_iterator it = vertex_cbegin(); it != vertex_cend(); it++) {
         int h = (it->halfedge() != nullptr ? int(it->halfedge()->id) : (-1));
-        const vecd &N(it->normal());
-        const vecd &P(it->position());
-        const vecd &C(it->color());
-        const vecd &T(it->texcoord());
+        const vecd& N(it->normal());
+        const vecd& P(it->position());
+        const vecd& C(it->color());
+        const vecd& T(it->texcoord());
         std::cout << "  V" << it->id << ": h=" << h << ", P=" << P << ", N=" << N
                   << ", C=" << C << ", T=" << T << std::endl;
     }
@@ -258,7 +328,7 @@ void mesh_t::dbgdump(void) {
 /// ------------------------------------------------------------------------------
 
 // support for shared_ptr on this
-vertex_t *vertex_t::pointer(void) { return this; }
+vertex_t* vertex_t::pointer(void) { return this; }
 
 vertex_t::vertex_t(void) {
     m_halfedge = nullptr;
@@ -267,33 +337,33 @@ vertex_t::vertex_t(void) {
 #endif
 }
 
-vertex_t::vertex_t(const vertex_t &other) { *this = other; }
+vertex_t::vertex_t(const vertex_t& other) { *this = other; }
 
 void vertex_t::clear(void) { m_halfedge = nullptr; }
 
 vertex_t::~vertex_t(void) { clear(); }
 
-halfedge_t *&vertex_t::halfedge(void) { return m_halfedge; }
+halfedge_t*& vertex_t::halfedge(void) { return m_halfedge; }
 
-const halfedge_t *vertex_t::halfedge(void) const { return m_halfedge; }
+const halfedge_t* vertex_t::halfedge(void) const { return m_halfedge; }
 
-vecd &vertex_t::position(void) { return m_position; }
+vecd& vertex_t::position(void) { return m_position; }
 
-vecd &vertex_t::normal(void) { return m_normal; }
+vecd& vertex_t::normal(void) { return m_normal; }
 
-vecd &vertex_t::color(void) { return m_color; }
+vecd& vertex_t::color(void) { return m_color; }
 
-vecd &vertex_t::texcoord(void) { return m_texcoord; }
+vecd& vertex_t::texcoord(void) { return m_texcoord; }
 
-const vecd &vertex_t::position(void) const { return m_position; }
+const vecd& vertex_t::position(void) const { return m_position; }
 
-const vecd &vertex_t::normal(void) const { return m_normal; }
+const vecd& vertex_t::normal(void) const { return m_normal; }
 
-const vecd &vertex_t::color(void) const { return m_color; }
+const vecd& vertex_t::color(void) const { return m_color; }
 
-const vecd &vertex_t::texcoord(void) const { return m_texcoord; }
+const vecd& vertex_t::texcoord(void) const { return m_texcoord; }
 
-const vertex_t &vertex_t::operator=(const vertex_t &other) {
+const vertex_t& vertex_t::operator=(const vertex_t& other) {
     m_position = other.m_position;
     m_normal = other.m_normal;
     m_color = other.m_color;
@@ -314,7 +384,7 @@ void vertex_t::reset_count(void) {
 /// IMPLEMENTATION OF HALFEDGE_T STRUCTURE
 /// ----------------------------------------------------------------------------
 
-halfedge_t *halfedge_t::pointer(void) { return this; }
+halfedge_t* halfedge_t::pointer(void) { return this; }
 
 halfedge_t::halfedge_t(void) {
     m_opposite = nullptr;
@@ -327,7 +397,7 @@ halfedge_t::halfedge_t(void) {
 #endif
 }
 
-halfedge_t::halfedge_t(const halfedge_t &other) { *this = other; }
+halfedge_t::halfedge_t(const halfedge_t& other) { *this = other; }
 
 void halfedge_t::clear(void) {
     m_opposite = nullptr;
@@ -339,27 +409,27 @@ void halfedge_t::clear(void) {
 
 halfedge_t::~halfedge_t(void) { clear(); }
 
-halfedge_t *&halfedge_t::opposite(void) { return m_opposite; }
+halfedge_t*& halfedge_t::opposite(void) { return m_opposite; }
 
-halfedge_t *&halfedge_t::next(void) { return m_next; }
+halfedge_t*& halfedge_t::next(void) { return m_next; }
 
-halfedge_t *&halfedge_t::prev(void) { return m_prev; }
+halfedge_t*& halfedge_t::prev(void) { return m_prev; }
 
-facet_t *&halfedge_t::facet(void) { return m_facet; }
+facet_t*& halfedge_t::facet(void) { return m_facet; }
 
-vertex_t *&halfedge_t::vertex(void) { return m_vertex; }
+vertex_t*& halfedge_t::vertex(void) { return m_vertex; }
 
-const halfedge_t *halfedge_t::opposite(void) const { return m_opposite; }
+const halfedge_t* halfedge_t::opposite(void) const { return m_opposite; }
 
-const halfedge_t *halfedge_t::next(void) const { return m_next; }
+const halfedge_t* halfedge_t::next(void) const { return m_next; }
 
-const halfedge_t *halfedge_t::prev(void) const { return m_prev; }
+const halfedge_t* halfedge_t::prev(void) const { return m_prev; }
 
-const facet_t *halfedge_t::facet(void) const { return m_facet; }
+const facet_t* halfedge_t::facet(void) const { return m_facet; }
 
-const vertex_t *halfedge_t::vertex(void) const { return m_vertex; }
+const vertex_t* halfedge_t::vertex(void) const { return m_vertex; }
 
-const halfedge_t &halfedge_t::operator=(const halfedge_t &other) {
+const halfedge_t& halfedge_t::operator=(const halfedge_t& other) {
     m_opposite = other.m_opposite;
     m_next = other.m_next;
     m_prev = other.m_prev;
@@ -380,7 +450,7 @@ void halfedge_t::reset_count(void) {
 /// IMPLEMENTATION OF FACET_T STRUCTURE
 /// -------------------------------------------------------------------------------
 
-facet_t *facet_t::pointer(void) { return this; }
+facet_t* facet_t::pointer(void) { return this; }
 
 facet_t::facet_t(void) {
     m_halfedge = nullptr;
@@ -389,21 +459,21 @@ facet_t::facet_t(void) {
 #endif
 }
 
-facet_t::facet_t(const facet_t &other) { *this = other; }
+facet_t::facet_t(const facet_t& other) { *this = other; }
 
 void facet_t::clear(void) { m_halfedge = nullptr; }
 
 facet_t::~facet_t(void) { clear(); }
 
-vecd &facet_t::normal(void) { return m_normal; }
+vecd& facet_t::normal(void) { return m_normal; }
 
-const vecd &facet_t::normal(void) const { return m_normal; }
+const vecd& facet_t::normal(void) const { return m_normal; }
 
-halfedge_t *&facet_t::halfedge(void) { return m_halfedge; }
+halfedge_t*& facet_t::halfedge(void) { return m_halfedge; }
 
-const halfedge_t *facet_t::halfedge(void) const { return m_halfedge; }
+const halfedge_t* facet_t::halfedge(void) const { return m_halfedge; }
 
-const facet_t &facet_t::operator=(const facet_t &other) {
+const facet_t& facet_t::operator=(const facet_t& other) {
     m_halfedge = other.m_halfedge;
     m_normal = other.m_normal;
 #ifdef _DEBUG
@@ -423,7 +493,7 @@ void facet_t::reset_count(void) {
 
 mesh_t::mesh_t(void) {}
 
-mesh_t::mesh_t(const mesh_t &other) { *this = other; }
+mesh_t::mesh_t(const mesh_t& other) { *this = other; }
 
 mesh_t::~mesh_t(void) { clear(); }
 
@@ -437,17 +507,17 @@ void mesh_t::clear(void) {
     m_texcoord = false;
 }
 
-vertex_t *mesh_t::new_vertex(void) {
+vertex_t* mesh_t::new_vertex(void) {
     m_vertices.push_back(vertex_t());
     return m_vertices.back().pointer();
 }
 
-halfedge_t *mesh_t::new_halfedge(void) {
+halfedge_t* mesh_t::new_halfedge(void) {
     m_halfedges.push_back(halfedge_t());
     return m_halfedges.back().pointer();
 }
 
-facet_t *mesh_t::new_facet(void) {
+facet_t* mesh_t::new_facet(void) {
     m_facets.push_back(facet_t());
     return m_facets.back().pointer();
 }
@@ -492,7 +562,7 @@ size_t mesh_t::nHalfedges(void) const { return m_halfedges.size(); }
 
 size_t mesh_t::nFacets(void) const { return m_facets.size(); }
 
-const mesh_t &mesh_t::operator=(const mesh_t &other) {
+const mesh_t& mesh_t::operator=(const mesh_t& other) {
     m_halfedges = other.m_halfedges;
     m_facets = other.m_facets;
     m_vertices = other.m_vertices;
@@ -502,7 +572,7 @@ const mesh_t &mesh_t::operator=(const mesh_t &other) {
 
 bool mesh_t::has_texcoord(void) const { return m_texcoord; }
 
-bool mesh_t::load(const std::string &name) {
+bool mesh_t::load(const std::string& name) {
     std::ifstream input(name.c_str());
     if (input.fail()) {
         std::cerr << "Error opening file " << name << std::endl;
@@ -686,8 +756,8 @@ test11:
     std::cout << "circulate face            : ";
     for (halfedge_iterator it = halfedge_begin(); it != halfedge_end(); it++) {
         if (it->facet() != nullptr) {
-            halfedge_t *curr = it->facet()->halfedge();
-            halfedge_t *first = curr;
+            halfedge_t* curr = it->facet()->halfedge();
+            halfedge_t* first = curr;
             do {
                 curr = curr->next();
             } while (first != curr && it->pointer() != curr);
