@@ -1,5 +1,5 @@
 CC = clang++
-CFLAGS = -std=c++11 -g -Wall
+CFLAGS = -std=c++11 -g -Wall -Wpedantic
 
 all: mesh.o main.cpp
 	$(CC) $(CFLAGS) main.cpp mesh.o -o main
