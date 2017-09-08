@@ -1,0 +1,12 @@
+#version 150		// GLSL version of the fragment shader
+
+out vec4 result;	// the RGBA result for this pixel
+in vec3 color;		// input color from the vertex shader
+
+void main(void) {
+    // the color input has been interpolated, but since the buffer
+    // does not contain an alpha value, we need to introduce it.
+    // 1.0 means fully opaque. At the moment, transparencies are not
+    // supported by the framework.
+    result = vec4(color.xyz,1.0f);
+};
