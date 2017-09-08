@@ -16,6 +16,37 @@ size_t facet_t::count = 0;
 // 1. Rewrite halfedge updation code. The if-else clauses have
 // diferent structures.
 
+vecd gen_normal_facet(facet_t* f){
+    vecd normal;
+    // gen a warning if facet not triangle
+    if(f->degree() != 3){
+        std::cerr << "WARNING: Not a triangle" << std::endl;
+    }
+    halfedge_t* h = f->halfedge();
+    halfedge_t* p = h->prev();
+    halfedge_t* n = h->next();
+ 
+    vecd v1 = h->vertex()->position() - n->vertex()->position();
+    vecd v2 = p->vertex()->position() - n->vertex()->position();
+
+    return 0.5 * v2.cross(v1);
+}
+
+vecd gen_normal_vertex(vertex_t* v){
+    /* Returns the normalized normal vecd for the vertex v */
+    vecd normal;
+    halfedge_t* h = v->halfedge();
+    do{
+        h = h->opposite()->next();
+        if(h->facet() != nullptr){
+            normal += h->facet()->normal();
+        }
+    } while(h != v->halfedge());
+
+    normal.normalize();
+    return normal;
+}
+
 // TASK 3:	Implement the edge_t data structure. This is used later in a map
 // to retrieve edges. By convention, the smaller vertex index is stored in v1
 // and the larger one in v2.
@@ -104,9 +135,14 @@ bool mesh_t::build_mesh(const std::vector< vecd >& in_vertex, /// input position
     // yet halfedges, so edge v1,v2 is the same as edge v2,v1
     std::unordered_map< edge_t, halfedge_t* > edge_list;
 
+    // a storage for the facet normals
+    std::vector<vecd> normal_list;
+    normal_list.reserve(in_facet.size());
+
+    facet_t* curr_face;
     for (size_t n = 0; n < in_facet.size(); n++) {
         // Generate a new facet in the mesh.
-        facet_t* curr_face = new_facet();
+        curr_face = new_facet();
         // Keep track of the first, current, and previous halfedge generated for
         // this face.
         halfedge_t *first, *curr, *prev;
@@ -174,10 +210,12 @@ bool mesh_t::build_mesh(const std::vector< vecd >& in_vertex, /// input position
         curr->next() = first;
 
         prev = curr = nullptr; // We go to a new facet
+
+        // all edges for this face have been generated. Find the normals
+        curr_face->normal() = gen_normal_facet(curr_face);
     }
 
     // TASK 5b establish prev, next for boundary halfedges
-    // TODO
     halfedge_iterator he_it;
     for (he_it = this->halfedge_begin(); he_it != this->halfedge_end(); he_it++){
         halfedge_t* h = &(*he_it);
@@ -186,6 +224,20 @@ bool mesh_t::build_mesh(const std::vector< vecd >& in_vertex, /// input position
             h->prev() = h->prev_around_vertex();
         }
     }
+
+    // Gen vertex normals
+    for (size_t n = 0; n < in_vertex.size(); n++) {
+        vertex_list[n]->normal() = gen_normal_vertex(vertex_list[n]);
+        std::cout << vertex_list[n]->id << " Normal " << vertex_list[n]->normal() << std::endl;
+    }
+
+    // Normalize facet normals
+    facet_iterator f_it;
+    for (f_it = this->facet_begin(); f_it != this->facet_end(); f_it++) {
+        facet_t* f = &(*f_it);
+        f->normal().normalize();
+    }
+
 
     vertex_list.clear();
     edge_list.clear();
