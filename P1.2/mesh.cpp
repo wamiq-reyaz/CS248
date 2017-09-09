@@ -13,8 +13,6 @@ size_t facet_t::count = 0;
 #endif
 
 /// YOUR TODO LIST:
-// 1. Rewrite halfedge updation code. The if-else clauses have
-// diferent structures.
 
 vecd gen_normal_facet(facet_t* f){
     vecd normal;
@@ -228,7 +226,6 @@ bool mesh_t::build_mesh(const std::vector< vecd >& in_vertex, /// input position
     // Gen vertex normals
     for (size_t n = 0; n < in_vertex.size(); n++) {
         vertex_list[n]->normal() = gen_normal_vertex(vertex_list[n]);
-        std::cout << vertex_list[n]->id << " Normal " << vertex_list[n]->normal() << std::endl;
     }
 
     // Normalize facet normals
