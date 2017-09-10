@@ -5,7 +5,7 @@ main: mesh.o main.cpp
 	$(CC) $(CFLAGS) main.cpp mesh.o -o main
 
 test: catch.hpp test-main.o test.cpp
-	$(CC) -std=c++11 test.cpp test-main.o -o test
+	$(CC) -std=c++11 test.cpp test-main.o mesh.o -o test
 
 test-main.o: test-main.cpp
 	$(CC) -std=c++11 test-main.cpp -c
