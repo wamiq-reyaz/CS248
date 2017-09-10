@@ -362,6 +362,46 @@ TEST_CASE("Facet is Triangle", "[fTri]"){
     WARN("Passed: All triangle facets correctly determined");
 }
 
+TEST_CASE("Vertex Normal", "[vNorm]"){  
+    // TODO
+    string_vector model_names;
+    model_names.push_back("Box.obj");
+    model_names.push_back("Boundary.obj");
+
+    mesh_t::vertex_iterator v_it;
+    for (string_vector::iterator it = model_names.begin(); it != model_names.end();
+         it++) {
+        mesh_t test_mesh;
+        test_mesh.load(*it);
+
+        for (v_it = test_mesh.vertex_begin(); v_it != test_mesh.vertex_end(); v_it++) {
+            vertex_t v = *v_it;
+            // fill here
+        }
+    }
+    WARN("Passed: All boundary vertices detected");
+}
+
+TEST_CASE("Facet Normal", "[fNorm]"){
+    // TODO
+    string_vector model_names;
+    model_names.push_back("Box.obj");
+    model_names.push_back("Boundary.obj");
+
+    mesh_t::facet_iterator facet_it;
+    for (string_vector::iterator it = model_names.begin(); it != model_names.end();
+         it++) {
+        mesh_t test_mesh;
+        test_mesh.load(*it);
+
+        for(facet_it = test_mesh.facet_begin(); facet_it != test_mesh.facet_end(); facet_it++){
+            facet_t f = *facet_it;
+            // fill here
+        }
+    }  
+    WARN("Passed: All triangle facets correctly determined");
+}
+
 TEST_CASE("Vertex normals normalized", "[vNormalNormalized]") {
     // See if the vertex normal norm is close to 1
     mesh_t test_mesh;
