@@ -146,27 +146,137 @@ TEST_CASE("Boundary Halfedge Facet", "[heBoundaryFacet]") {
 }
 
 TEST_CASE("Vertex Degree", "vDeg"){
-    // TODO
+    // TODO  
 }
 
-TEST_CASE("Vertex On Border", "vBord"){
-    // TODO   
+TEST_CASE("Vertex On Border", "[vBord]"){  
+    string_vector model_names;
+    model_names.push_back("Box.obj");
+    model_names.push_back("Boundary.obj");
+    model_names.push_back("Sphere.obj");
+    model_names.push_back("Torus.obj");
+
+    mesh_t::vertex_iterator v_it;
+    for (string_vector::iterator it = model_names.begin(); it != model_names.end();
+         it++) {
+        mesh_t test_mesh;
+        test_mesh.load(*it);
+
+        for (v_it = test_mesh.vertex_begin(); v_it != test_mesh.vertex_end(); v_it++) {
+            vertex_t v = *v_it;
+            if(*it == "Boundary.obj" && (v.id == 1 || v.id == 2
+                                        || v.id == 3 || v.id == 4)){
+
+                REQUIRE(v.on_border() == true);
+                WARN("Vertex " << v.id << " of Boundary.obj on border");
+            }
+            else{
+                REQUIRE(v.on_border() == false);
+            }
+        }
+    }
+    WARN("Passed: All boundary vertices detected");
 }
 
-TEST_CASE("Halfedge On Border", "heBord"){
-    // TODO   
+TEST_CASE("Halfedge On Border", "[heBord]"){
+    string_vector model_names;
+    model_names.push_back("Box.obj");
+    model_names.push_back("Boundary.obj");
+    model_names.push_back("Sphere.obj");
+    model_names.push_back("Torus.obj");
+
+    mesh_t::halfedge_iterator he_it;
+    for (string_vector::iterator it = model_names.begin(); it != model_names.end();
+         it++) {
+        mesh_t test_mesh;
+        test_mesh.load(*it);
+
+        for (he_it = test_mesh.halfedge_begin(); he_it != test_mesh.halfedge_end(); he_it++) {
+            halfedge_t edge = *he_it;
+            if(*it == "Boundary.obj" && (edge.id == 3 || edge.id == 7
+                                        || edge.id == 11 || edge.id == 15)){
+
+                REQUIRE(edge.on_border() == true);
+                WARN("Half-edge " << edge.id << " of Boundary.obj on border");
+            }
+            else{
+                REQUIRE(edge.on_border() == false);
+            }
+        }
+    }
+    WARN("Passed: All boundary half-edges detected");
 }
 
-TEST_CASE("Facet Degree", "fDeg"){
-    // TODO   
+TEST_CASE("Facet Degree", "[fDeg]"){
+    string_vector model_names;
+    model_names.push_back("Box.obj");
+    model_names.push_back("Boundary.obj");
+    model_names.push_back("Sphere.obj");
+    model_names.push_back("Torus.obj");
+
+    mesh_t::facet_iterator facet_it;
+    for (string_vector::iterator it = model_names.begin(); it != model_names.end();
+         it++) {
+        mesh_t test_mesh;
+        test_mesh.load(*it);
+
+        for(facet_it = test_mesh.facet_begin(); facet_it != test_mesh.facet_end(); facet_it++){
+            facet_t f = *facet_it;
+
+            REQUIRE(f.degree() == 3);
+        }
+    }
+    WARN("Passed: Facet Degree correctly determined");
 }
 
-TEST_CASE("Facet On Border", "fBord"){
-    // TODO   
+TEST_CASE("Facet On Border", "[fBord]"){
+    string_vector model_names;
+    model_names.push_back("Box.obj");
+    model_names.push_back("Boundary.obj");
+    model_names.push_back("Sphere.obj");
+    model_names.push_back("Torus.obj");
+
+    mesh_t::facet_iterator facet_it;
+    for (string_vector::iterator it = model_names.begin(); it != model_names.end();
+         it++) {
+        mesh_t test_mesh;
+        test_mesh.load(*it);
+
+        for(facet_it = test_mesh.facet_begin(); facet_it != test_mesh.facet_end(); facet_it++){
+            facet_t f = *facet_it;
+            if(*it == "Boundary.obj" && (f.id == 0 || f.id == 1
+                                        || f.id == 2 || f.id == 3)){
+
+                REQUIRE(f.on_border() == true);
+                WARN("Facet " << f.id << " of Boundary.obj on border");
+            }
+            else{
+                REQUIRE(f.on_border() == false);
+            }            
+        }
+    }
+    WARN("Passed: Border facets correctly determined");  
 }
 
-TEST_CASE("Facet is Triangle", "fTri"){
-    // TODO   
+TEST_CASE("Facet is Triangle", "[fTri]"){
+    string_vector model_names;
+    model_names.push_back("Box.obj");
+    model_names.push_back("Boundary.obj");
+    model_names.push_back("Sphere.obj");
+    model_names.push_back("Torus.obj");
+
+    mesh_t::facet_iterator facet_it;
+    for (string_vector::iterator it = model_names.begin(); it != model_names.end();
+         it++) {
+        mesh_t test_mesh;
+        test_mesh.load(*it);
+
+        for(facet_it = test_mesh.facet_begin(); facet_it != test_mesh.facet_end(); facet_it++){
+            facet_t f = *facet_it;
+            REQUIRE(f.is_triangle() == true);
+        }
+    }  
+    WARN("Passed: All triangle facets correctly determined");
 }
 
 TEST_CASE("Vertex normals normalized", "[vNormalNormalized]") {
