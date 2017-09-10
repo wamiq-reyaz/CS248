@@ -2,16 +2,19 @@
 
 #include "mesh.h"
 
+#include<unordered_map>
 #include <cmath>
 
 typedef std::vector< std::string > string_vector;
+
+const double EPS = 1e-5;
 
 TEST_CASE("Build Mesh", "[build]") {
     // Make sure all the obj files load and return pass
 
     string_vector model_names;
     model_names.push_back("Box.obj");
-    model_names.push_back("Boundary.obj");
+    model_names.push_back("Boundary.obj");model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
 
@@ -32,9 +35,10 @@ TEST_CASE("Number of vertices", "[nVertices]") {
     string_vector model_names;
     model_names.push_back("Box.obj");
     model_names.push_back("Boundary.obj");
+    model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
-    size_t n_vertices_array[4] = {8, 5, 1986, 2048};
+    size_t n_vertices_array[5] = {8, 5, 1090, 1986, 2048};
 
     size_t counter = 0;
     for (string_vector::iterator it = model_names.begin(); it != model_names.end();
@@ -51,9 +55,10 @@ TEST_CASE("Number of facets", "[nFacets]") {
     string_vector model_names;
     model_names.push_back("Box.obj");
     model_names.push_back("Boundary.obj");
+    model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
-    size_t n_facets_array[4] = {12, 4, 3968, 4096};
+    size_t n_facets_array[5] = {12, 4, 2176, 3968, 4096};
 
     size_t counter = 0;
     for (string_vector::iterator it = model_names.begin(); it != model_names.end();
@@ -66,13 +71,14 @@ TEST_CASE("Number of facets", "[nFacets]") {
     WARN("Passed: mesh_t.load() loads all Facets");
 }
 
-TEST_CASE("Number of Halfedges", "[nFacets]") {
+TEST_CASE("Number of Halfedges", "[nHalf]") {
     string_vector model_names;
     model_names.push_back("Box.obj");
     model_names.push_back("Boundary.obj");
+    model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
-    size_t n_he_array[4] = {36, 16, 11904, 12288};
+    size_t n_he_array[5] = {36, 16, 6528, 11904, 12288};
 
     size_t counter = 0;
     for (string_vector::iterator it = model_names.begin(); it != model_names.end();
@@ -145,14 +151,91 @@ TEST_CASE("Boundary Halfedge Facet", "[heBoundaryFacet]") {
     WARN("Passed: All Boundary half-edge facets point to nullptr");
 }
 
-TEST_CASE("Vertex Degree", "vDeg"){
-    // TODO  
+TEST_CASE("Vertex Degree", "[vDeg]"){
+    // TODO
+    string_vector model_names;
+    model_names.push_back("Box.obj");
+    model_names.push_back("Boundary.obj");
+    model_names.push_back("Cylinder.obj");
+    model_names.push_back("Sphere.obj");
+    model_names.push_back("Torus.obj");
+
+    // setup a map from the degree to the number of matrices having that
+    // degree. We'll decrement it each time we hit a vertex matching the degree
+    // the final result must be zero
+    std::unordered_map<size_t, size_t> box_degree_to_num_vertices;
+    box_degree_to_num_vertices[4] = 4;
+    box_degree_to_num_vertices[5] = 4;
+
+    std::unordered_map<size_t, size_t> boundary_degree_to_num_vertices;
+    boundary_degree_to_num_vertices[3] = 4;
+    boundary_degree_to_num_vertices[4] = 1;
+
+    std::unordered_map<size_t, size_t> cylinder_degree_to_num_vertices;
+    cylinder_degree_to_num_vertices[5] = 128;
+    cylinder_degree_to_num_vertices[6] = 960;
+    cylinder_degree_to_num_vertices[64] = 2;
+
+    std::unordered_map<size_t, size_t> sphere_degree_to_num_vertices;
+    sphere_degree_to_num_vertices[5] = 128;
+    sphere_degree_to_num_vertices[6] = 1856;
+    sphere_degree_to_num_vertices[64] = 2;
+
+    std::unordered_map<size_t, size_t> torus_degree_to_num_vertices;
+    torus_degree_to_num_vertices[6] = 2048;
+
+    mesh_t::vertex_iterator v_it;
+    for (string_vector::iterator it = model_names.begin(); it != model_names.end();
+         it++) {
+        mesh_t test_mesh;
+        test_mesh.load(*it);
+
+        for (v_it = test_mesh.vertex_begin(); v_it != test_mesh.vertex_end(); v_it++) {
+            vertex_t v = *v_it;
+            if(*it == "Box.obj"){
+                // Here, if we hit a vertex with the required degree
+                // we decrement the count of the map
+                box_degree_to_num_vertices[v.degree()]--;
+            }
+            else if(*it == "Boundary.obj"){
+                boundary_degree_to_num_vertices[v.degree()]--;
+            }
+            else if(*it == "Cylinder.obj"){
+                cylinder_degree_to_num_vertices[v.degree()]--;
+            }
+            else if(*it == "Sphere.obj"){
+                sphere_degree_to_num_vertices[v.degree()]--;
+            }
+            else if(*it == "Torus.obj"){
+                torus_degree_to_num_vertices[v.degree()]--;
+            }
+        }
+    }
+
+    // All counts should hit zero
+    REQUIRE(box_degree_to_num_vertices[3] == 0);
+    REQUIRE(box_degree_to_num_vertices[4] == 0);
+
+    REQUIRE(boundary_degree_to_num_vertices[4] == 0);
+    REQUIRE(boundary_degree_to_num_vertices[5] == 0);
+
+    REQUIRE(cylinder_degree_to_num_vertices[5] == 0);
+    REQUIRE(cylinder_degree_to_num_vertices[6] == 0);
+    REQUIRE(cylinder_degree_to_num_vertices[64] == 0);
+
+    REQUIRE(sphere_degree_to_num_vertices[5] == 0);
+    REQUIRE(sphere_degree_to_num_vertices[6] == 0);
+    REQUIRE(sphere_degree_to_num_vertices[64] == 0);
+
+    REQUIRE(torus_degree_to_num_vertices[6] == 0);
+
+    WARN("Passed: All vertices' degree detected"); 
 }
 
 TEST_CASE("Vertex On Border", "[vBord]"){  
     string_vector model_names;
     model_names.push_back("Box.obj");
-    model_names.push_back("Boundary.obj");
+    model_names.push_back("Boundary.obj");model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
 
@@ -181,7 +264,7 @@ TEST_CASE("Vertex On Border", "[vBord]"){
 TEST_CASE("Halfedge On Border", "[heBord]"){
     string_vector model_names;
     model_names.push_back("Box.obj");
-    model_names.push_back("Boundary.obj");
+    model_names.push_back("Boundary.obj");model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
 
@@ -210,7 +293,7 @@ TEST_CASE("Halfedge On Border", "[heBord]"){
 TEST_CASE("Facet Degree", "[fDeg]"){
     string_vector model_names;
     model_names.push_back("Box.obj");
-    model_names.push_back("Boundary.obj");
+    model_names.push_back("Boundary.obj");model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
 
@@ -232,7 +315,7 @@ TEST_CASE("Facet Degree", "[fDeg]"){
 TEST_CASE("Facet On Border", "[fBord]"){
     string_vector model_names;
     model_names.push_back("Box.obj");
-    model_names.push_back("Boundary.obj");
+    model_names.push_back("Boundary.obj");model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
 
@@ -261,7 +344,7 @@ TEST_CASE("Facet On Border", "[fBord]"){
 TEST_CASE("Facet is Triangle", "[fTri]"){
     string_vector model_names;
     model_names.push_back("Box.obj");
-    model_names.push_back("Boundary.obj");
+    model_names.push_back("Boundary.obj");model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
 
@@ -285,7 +368,7 @@ TEST_CASE("Vertex normals normalized", "[vNormalNormalized]") {
 
     string_vector model_names;
     model_names.push_back("Box.obj");
-    model_names.push_back("Boundary.obj");
+    model_names.push_back("Boundary.obj");model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
 
@@ -296,7 +379,7 @@ TEST_CASE("Vertex normals normalized", "[vNormalNormalized]") {
         test_mesh.load(*it);
         for (v_it = test_mesh.vertex_begin(); v_it != test_mesh.vertex_end(); v_it++) {
             vertex_t vertex = *v_it;
-            REQUIRE(fabs(vertex.normal().length2() - 1) < 1e-5);
+            REQUIRE(fabs(vertex.normal().length2() - 1) < EPS);
         }
     }
     WARN("Passed: Vertex normal normalized");
@@ -308,7 +391,7 @@ TEST_CASE("Facet normals normalized", "[fNormalNormalized]") {
 
     string_vector model_names;
     model_names.push_back("Box.obj");
-    model_names.push_back("Boundary.obj");
+    model_names.push_back("Boundary.obj");model_names.push_back("Cylinder.obj");
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
 
