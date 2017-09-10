@@ -226,6 +226,7 @@ bool mesh_t::build_mesh(const std::vector< vecd >& in_vertex, /// input position
     // Gen vertex normals
     for (size_t n = 0; n < in_vertex.size(); n++) {
         vertex_list[n]->normal() = gen_normal_vertex(vertex_list[n]);
+        // std::cout << vertex_list[n]->id << " Normal " << vertex_list[n]->normal() << std::endl;
     }
 
     // Normalize facet normals
@@ -234,7 +235,6 @@ bool mesh_t::build_mesh(const std::vector< vecd >& in_vertex, /// input position
         facet_t* f = &(*f_it);
         f->normal().normalize();
     }
-
 
     vertex_list.clear();
     edge_list.clear();
