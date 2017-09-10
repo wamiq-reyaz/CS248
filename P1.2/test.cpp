@@ -160,9 +160,9 @@ TEST_CASE("Vertex Degree", "[vDeg]"){
     model_names.push_back("Sphere.obj");
     model_names.push_back("Torus.obj");
 
-    // setup a map from the degree to the number of matrices having that
+    // setup a map from the degree to the number of vertices having that
     // degree. We'll decrement it each time we hit a vertex matching the degree
-    // the final result must be zero
+    // The final result must be zero
     std::unordered_map<size_t, size_t> box_degree_to_num_vertices;
     box_degree_to_num_vertices[4] = 4;
     box_degree_to_num_vertices[5] = 4;
@@ -362,11 +362,33 @@ TEST_CASE("Facet is Triangle", "[fTri]"){
     WARN("Passed: All triangle facets correctly determined");
 }
 
-TEST_CASE("Vertex Normal", "[vNorm]"){  
+TEST_CASE("Vertex Normals", "[vNorm]"){  
     // TODO
     string_vector model_names;
     model_names.push_back("Box.obj");
     model_names.push_back("Boundary.obj");
+
+    // We'll set up a map from the vertex ids to the normal vector
+    // We then check if the id matches the vector within floating point errors
+
+    std::unordered_map<size_t, vecd> boundary_normal;
+    // for boundary, everything points in +Z direction
+    boundary_normal[0] = vecd(0, 0, 1);
+    boundary_normal[1] = vecd(0, 0, 1);
+    boundary_normal[2] = vecd(0, 0, 1);
+    boundary_normal[3] = vecd(0, 0, 1);
+    boundary_normal[4] = vecd(0, 0, 1);
+
+    std::unordered_map<size_t, vecd> box_normal;
+    // this one is a lot more tricky
+    box_normal[0] = vecd(-0.333333, -0.666667, 0.666667);
+    box_normal[1] = vecd(-0.816497, -0.408248, -0.408248);
+    box_normal[2] = vecd(0.333333, -0.666667, -0.666667);
+    box_normal[3] = vecd(0.816497, -0.408248, 0.408248);
+    box_normal[4] = vecd(-0.666667, 0.666667, 0.333333);
+    box_normal[5] = vecd(0.408248, 0.408248, 0.816497);
+    box_normal[6] = vecd(0.666667, 0.666667, -0.333333);
+    box_normal[7] = vecd(-0.408248, 0.408248, -0.816497);
 
     mesh_t::vertex_iterator v_it;
     for (string_vector::iterator it = model_names.begin(); it != model_names.end();
@@ -376,17 +398,47 @@ TEST_CASE("Vertex Normal", "[vNorm]"){
 
         for (v_it = test_mesh.vertex_begin(); v_it != test_mesh.vertex_end(); v_it++) {
             vertex_t v = *v_it;
-            // fill here
+            if(*it == "Boundary.obj"){
+                REQUIRE(v.normal() - boundary_normal[v.id] == vecd(0));
+            }
+            if(*it == "Box.obj"){
+                REQUIRE(v.normal() - box_normal[v.id] == vecd(0));
+            }
         }
     }
     WARN("Passed: All boundary vertices detected");
 }
 
-TEST_CASE("Facet Normal", "[fNorm]"){
+TEST_CASE("Facet Normals", "[fNorm]"){
     // TODO
     string_vector model_names;
     model_names.push_back("Box.obj");
     model_names.push_back("Boundary.obj");
+
+    // We'll set up a map from the vertex ids to the normal vector
+    // We then check if the id matches the vector within floating point errors
+
+    std::unordered_map<size_t, vecd> boundary_normal;
+    // for boundary, everything points in +Z direction
+    boundary_normal[0] = vecd(0, 0, 1);
+    boundary_normal[1] = vecd(0, 0, 1);
+    boundary_normal[2] = vecd(0, 0, 1);
+    boundary_normal[3] = vecd(0, 0, 1);
+
+    std::unordered_map<size_t, vecd> box_normal;
+    // the faces point in +- x, y, z directions
+    box_normal[0] = vecd(0, -1, 0);
+    box_normal[1] = vecd(0, -1, 0);
+    box_normal[2] = vecd(0, 1, 0);
+    box_normal[3] = vecd(0, 1, 0);
+    box_normal[4] = vecd(0, 0, 1);
+    box_normal[5] = vecd(0, 0, 1);
+    box_normal[6] = vecd(1, 0, 0);
+    box_normal[7] = vecd(1, 0, 0);
+    box_normal[8] = vecd(0, 0, -1);
+    box_normal[9] = vecd(0, 0, -1);
+    box_normal[10] = vecd(-1, 0, 0);
+    box_normal[11] = vecd(-1, 0, 0);
 
     mesh_t::facet_iterator facet_it;
     for (string_vector::iterator it = model_names.begin(); it != model_names.end();
@@ -396,7 +448,12 @@ TEST_CASE("Facet Normal", "[fNorm]"){
 
         for(facet_it = test_mesh.facet_begin(); facet_it != test_mesh.facet_end(); facet_it++){
             facet_t f = *facet_it;
-            // fill here
+            if(*it == "Boundary.obj"){
+                REQUIRE(f.normal() - boundary_normal[f.id] == vecd(0));
+            }
+            if(*it == "Box.obj"){
+                REQUIRE(f.normal() - box_normal[f.id] == vecd(0));
+            }
         }
     }  
     WARN("Passed: All triangle facets correctly determined");
