@@ -24,6 +24,8 @@ vecd gen_normal_facet(facet_t* f){
     halfedge_t* p = h->prev();
     halfedge_t* n = h->next();
  
+    // if A, B, C are the vertices of a triangle, area = 0.5*AB*BC
+    // AB = pointB- pointA; BC = pointC - pointB
     vecd v1 = h->vertex()->position() - n->vertex()->position();
     vecd v2 = p->vertex()->position() - n->vertex()->position();
 
@@ -35,6 +37,7 @@ vecd gen_normal_vertex(vertex_t* v){
     vecd normal;
     halfedge_t* h = v->halfedge();
     do{
+        // sum of all normals of adjacent faces
         h = h->opposite()->next();
         if(h->facet() != nullptr){
             normal += h->facet()->normal();
@@ -57,7 +60,7 @@ struct edge_t {
     }
     size_t v1, v2;
     bool operator==(const edge_t& other) const {
-        // TODO -- implement the comparison function. Two edges are identical if
+        // Two edges are identical if
         // both their indices are identical.
         if (this->v1 == other.v1 && this->v2 == other.v2) {
             return true;
@@ -152,7 +155,7 @@ bool mesh_t::build_mesh(const std::vector< vecd >& in_vertex, /// input position
             // generate edges from facet
             size_t v1 = in_facet[n][ii];
             size_t v2 = in_facet[n][(ii + 1) % n_edges]; // to wrap around and get to
-            // zero for last vertex
+                                                        // zero for last vertex
 
             halfedge_t *he_parallel, *he_anti_parallel;
             edge_t edge(v1, v2);
@@ -234,6 +237,7 @@ bool mesh_t::build_mesh(const std::vector< vecd >& in_vertex, /// input position
     for (f_it = this->facet_begin(); f_it != this->facet_end(); f_it++) {
         facet_t* f = &(*f_it);
         f->normal().normalize();
+        std::cout << f->normal() <<  std::endl;
     }
 
     vertex_list.clear();
@@ -252,13 +256,14 @@ halfedge_t* halfedge_t::next_around_vertex(void) {
     halfedge_t* h = this->opposite();
     vertex_t* v = this->vertex();
     do {
+        // go around vertex edges till we hit another boundary half-edge
         h = h->next();
         if(h->vertex() == v){
             h = h->opposite();
         }
-    } while (!h->on_border());
+    } while (!h->on_border()); // we've hit jackpot
 
-    return h; // TODO -- replace this line
+    return h; 
 }
 
 halfedge_t* halfedge_t::prev_around_vertex(void) {
@@ -271,7 +276,7 @@ halfedge_t* halfedge_t::prev_around_vertex(void) {
         }
     } while (!h->on_border());
 
-    return h; // TODO -- replace this line
+    return h; 
 }
 
 // TASK 6
@@ -285,7 +290,7 @@ size_t vertex_t::degree(void) const {
         degree++;
     }while(h != this->halfedge());
 
-    return degree; // TODO -- replace this line
+    return degree; 
 }
 
 bool vertex_t::on_border(void) const {
@@ -298,7 +303,7 @@ bool vertex_t::on_border(void) const {
         h = h->opposite()->next();
     }while(h != this->halfedge());
 
-    return false; // TODO -- replace this line
+    return false; 
 }
 
 bool halfedge_t::on_border(void) const {
@@ -306,7 +311,7 @@ bool halfedge_t::on_border(void) const {
     if (this->facet() == nullptr) {
         return true;
     }
-    return false; // TODO -- replace this line
+    return false; 
 }
 
 size_t facet_t::degree(void) const {
@@ -318,7 +323,7 @@ size_t facet_t::degree(void) const {
         h = h->next();
         degree++;
     }while(h != this->halfedge());
-    return degree; // TODO -- replace this line
+    return degree; 
 }
 
 bool facet_t::on_border(void) const {
@@ -331,7 +336,7 @@ bool facet_t::on_border(void) const {
         }
     }while(h != this->halfedge());
 
-    return false; // TODO -- replace this line
+    return false; 
 }
 
 bool facet_t::is_triangle(void) const {
@@ -339,7 +344,7 @@ bool facet_t::is_triangle(void) const {
     if(this->degree() == 3){
         return true;
     }
-    return false; // TODO -- replace this line
+    return false; 
 }
 
 void mesh_t::dbgdump(void) {

@@ -65,9 +65,10 @@ vec<T> operator*(const S& scalar, const vec<T>& v) {
 	vec<T> temp;
 	for(int ii = 0; ii < 4; ii++){
 		temp(ii) = T(scalar) * v(ii); // Type conversion is necessary
+									  // otherwise floats might be promoted to doubles
 	}
 
-	return temp; // do not replace this line
+	return temp; 
 }
 
 template<class T>
@@ -151,7 +152,7 @@ template<class T>
 void vec<T>::normalize(size_t n) {
 	assert("vec<T>::normalize() -- invalid argument" && n < 5);
 	if(this->length2(n) == 0){
-		return; // do nothing if length = 0
+		return; 
 	}
 	else{
 		// find the length of the first n components
@@ -267,7 +268,7 @@ vec<T> vec<T>::operator*(const S& scalar) {
 		temp(ii) = m_data[ii] * T(scalar);
 	}
 
-	return temp; //do not replace this line
+	return temp; 
 }
 
 template<class T>
@@ -283,7 +284,6 @@ vec<T> vec<T>::operator/(const S& scalar) {
 
 template<class T>
 const vec<T> vec<T>::operator=(const vec<T>& other) {
-	// TODO -- overwrite each component in this vector with the matching component of other.
 	for(int i = 0; i < 4; i++){
 		m_data[i] = other(i);
 	}
@@ -302,7 +302,7 @@ bool vec<T>::operator==(const vec<T>& other) const {
 	}
 
 	//otherwise all elements are almost equal
-	return true; // do not replace this line
+	return true; 
 }
 
 template<class T>

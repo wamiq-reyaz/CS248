@@ -59,8 +59,6 @@ typedef mat<double> matd;
 
 template<class S, class T>
 mat<T> operator*(const S& scalar, const vec<T>& M) {
-	// TODO -- multiply each component of M with scalar, in a new matrix. return new matrix
-
 	mat<T> temp;
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj--){
@@ -69,7 +67,7 @@ mat<T> operator*(const S& scalar, const vec<T>& M) {
 			temp(ii, jj) = T(scalar) * M(ii, jj);
 		}
 	}
-	return temp; // do not replace this line
+	return temp; //
 }
 
 template<class T>
@@ -149,7 +147,7 @@ mat<T>::~mat(void) {
 template<class T>
 void mat<T>::identity(void) {
 	// Imma do it the simple way. Use two iterators. IF ii==jj
-	// put in a 1
+	// put in a 1, otherwise 0
 	for(int ii = 0; ii < 4; ii++){
 		for(int jj = 0; jj < 4; jj++){
 			T element = 0;
@@ -171,7 +169,7 @@ mat<T> mat<T>::transpose(void) const {
 			temp(ii, jj) = (*this)(jj, ii); 
 		}
 	}	
-	return temp; // do not replace this line
+	return temp; 
 }
 
 template<class T>
@@ -199,7 +197,8 @@ mat<T> mat<T>::operator-(const mat<T>& other) const {
 template<class T>
 mat<T> mat<T>::operator*(const mat<T>& other) const{
 	mat<T> temp;
-	
+	// iterate over all rows and columns using ii, jj. kk is used as
+	// dummy variable for summing
 	for (int ii = 0; ii < 4; ii++) {
 		for(int jj = 0; jj < 4; jj++) {
             for(int kk = 0; kk < 4; kk++) {
@@ -219,7 +218,7 @@ mat<T> mat<T>::operator-(void) const {
 			temp(ii, jj) = -(*this)(ii, jj);
 		}
 	}	
-	return temp; // do not replace this line
+	return temp; 
 }
 
 template<class T>
@@ -271,7 +270,7 @@ vec<T> mat<T>::operator*(const vec<T>& v) {
 		temp(ii) = row.dot(v);
 	}
 
-	return temp; // replace this line
+	return temp;
 }
 
 template<class T>
@@ -288,7 +287,6 @@ template<class T>
 template<class S> 
 const mat<T>& mat<T>::operator/=(const S& scalar) {
 	assert("mat<T>::operator/= -- invalid argument" && T(scalar) != T(0));
-	// TODO -- divide each matrix component by scalar. Don't forget to convert scalar to type T.
 	for (int ii = 0; ii < 16; ii++) // I am in the class. Im gonna use it
 	{
 		m_data[ii] /= T(scalar);

@@ -15,7 +15,15 @@ Simply grab `mesh.c` for the function definitions. To link against `mesh.o`, run
 make mesh
 ```
 
-and copy the `mesh.o` file to your favourite library storage.
+and move the `mesh.o` file to your library path.
+
+To see a dump of the meshes on `stdout`, run
+
+```bash
+make
+```
+
+and then run `./main <model_name>`
 
 ## Testing
 
@@ -25,4 +33,10 @@ Just run
 make && ./test 
 ```
 
-This will run all tests by default.
+This will run all tests by default. To find the list of available tests, run
+
+```bash
+./test -l
+```
+
+and test a particular module.
