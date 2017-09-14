@@ -7,6 +7,9 @@ main: mesh.o main.cpp
 test: catch.hpp test-main.o test.cpp
 	$(CC) -std=c++11 test.cpp test-main.o mesh.o -o test
 
+test_vec: test_vec.cpp test-main.o catch.hpp
+	$(CC) test_vec.cpp test-main.o -o test_vec
+
 test-main.o: test-main.cpp
 	$(CC) -std=c++11 test-main.cpp -c
 

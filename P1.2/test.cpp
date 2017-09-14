@@ -71,7 +71,7 @@ TEST_CASE("Number of facets", "[nFacets]") {
     WARN("Passed: mesh_t.load() loads all Facets");
 }
 
-TEST_CASE("Number of Halfedges", "[nHalf]") {
+TEST_CASE("Number of Halfedges", "[nHalf]") { 
     string_vector model_names;
     model_names.push_back("Box.obj");
     model_names.push_back("Boundary.obj");

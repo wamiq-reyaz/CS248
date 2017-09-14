@@ -40,3 +40,9 @@ This will run all tests by default. To find the list of available tests, run
 ```
 
 and test a particular module.
+
+To test the vector library, use
+
+```bash
+make test_vec && ./test_vec 
+```
