@@ -59,20 +59,28 @@ quat<T> quat<T>::operator*(const quat<T>& other) const {
 
 template<class T>
 quat<T> quat<T>::inverse(void) const {
-	// TODO: implement the inverse of a quaternion
-	return quat<T>(); // TODO: replace this line
+	// What to do if zero?
+	quat<T> temp;
+	temp = this->conjugate()/ (this->length2()); // length comes from base class
+	return temp;
 }
 
 template<class T>
 const quat<T>& quat<T>::operator*=(const quat<T>& other) {
 	// TODO: implement the Hamilton product as cumulative operator
+	*this = *this * other;
 	return *this;
 }
 
 template<class T>
 quat<T> quat<T>::conjugate(void) const {
 	// TODO: implement the conjugate of a quaternion
-	return quat<T>(); // TODO: replace this line
+	vec<T> temp;
+	temp[0] = this->real();
+	temp[1] = -this->imaginary(0);
+	temp[2] = -this->imaginary(1);
+	temp[3] = -this->imaginary(2);
+	return quat<T>(temp); 
 }
 
 // END TODO =======================================================================================
