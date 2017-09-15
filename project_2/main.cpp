@@ -1,10 +1,12 @@
-#include <stdio.h>	
-#include <stdlib.h>
-#include <time.h>			// for time()
+#include <cstdio>	
+#include <cstdlib>
+#include <ctime>			// for time()
 #include <iostream>			// for std::cerr, std::cout
-#include "GL/glew.h"
+#include <cerrno>
+
+#include <GL/glew.h>
 // #include "GL/wglew.h"
-#include "GL/glut.h"
+#include <GL/glut.h>
 #include "timing.h"			// handling of timers
 #include "Program.h"		// shader wrapper
 #include "model.h"			// obj file loader
@@ -16,7 +18,7 @@
 #include "arcball.h"		// Your implementation of the arcball
 #include "camera.h"			// Your implementation of the camera
 
-#include "GL/glu.h"
+#include <GL/glu.h>
 
 //============================================================================================
 //   VARIABLE DECLARATION
@@ -146,7 +148,7 @@ void ParseCommandLine(int *argc,char **argv) {
  */
 void UpdateTitle(float fps=0.0f) {
 	char text[100];
-	sprintf_s(text,100,"%s @ %.2f fps",g_State.app_name.c_str(),fps);
+	sprintf(text,100,"%s @ %.2f fps",g_State.app_name.c_str(),fps);
 	glutSetWindowTitle(text);
 }
 
@@ -618,13 +620,13 @@ int main(int argc, char **argv) {
 
 	// 2. CREATE A WINDOW
 	char *tmp=new char[g_State.app_name.size()+2];
-	sprintf_s(tmp,g_State.app_name.size()+2,"%s",g_State.app_name.c_str());
+	sprintf(tmp,g_State.app_name.size()+2,"%s",g_State.app_name.c_str());
     glutCreateWindow(tmp);
 	delete[] tmp;
 
 
 	// 3. REGISTER CALLBACKS
-	errno_t error = fopen_s(&logfile,"log.txt","w");
+	errno_t error = fopen(&logfile,"log.txt","w");
 	if (error) logfile=NULL;
 		
 	if (logfile) {
