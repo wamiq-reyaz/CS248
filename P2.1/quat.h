@@ -10,6 +10,8 @@
 //	into a 4D vector, in which case we want vector math (not quaternion math) to apply. Be prepared to explain to the TA
 //	if the vec<T> class has to be changed using the "virtual" keyword in this case and why or why not.
 
+
+
 // CONVENTIONS:
 //	The real part is stored in the vector's first component, the imaginary parts follow.
 
@@ -39,7 +41,20 @@ template<class T>
 quat<T> quat<T>::operator*(const quat<T>& other) const {
 	// TODO: implement the Hamilton product between two quaternions
 	// see also: https://en.wikipedia.org/wiki/Quaternion
-	return quat<T>(); // TODO: replace this line
+	vec<T> temp;
+	temp[0] = this->m_data[0]*other.m_data[0] - this->m_data[1]*other.m_data[1]
+			- this->m_data[2]*other.m_data[2] - this->m_data[3]*other.m_data[3];
+
+	temp[1] = this->m_data[0]*other.m_data[1] + this->m_data[1]*other.m_data[0]
+			+ this->m_data[2]*other.m_data[3] - this->m_data[3]*other.m_data[2];
+
+	temp[2] = this->m_data[0]*other.m_data[2] - this->m_data[1]*other.m_data[3]
+			+ this->m_data[2]*other.m_data[0] + this->m_data[3]*other.m_data[1];
+
+	temp[3] = this->m_data[0]*other.m_data[3] + this->m_data[1]*other.m_data[2]
+			- this->m_data[2]*other.m_data[1] + this->m_data[3]*other.m_data[0];
+
+	return quat<T>(temp); 
 }
 
 template<class T>
@@ -63,15 +78,15 @@ quat<T> quat<T>::conjugate(void) const {
 // END TODO =======================================================================================
 
 template<class T>
-quat<T>::quat(const T& r, const T& i, const T& j, const T& k) : vec(){
-	m_data[0] = r;
-	m_data[1] = i;
-	m_data[2] = j;
-	m_data[3] = k;
+quat<T>::quat(const T& r, const T& i, const T& j, const T& k) : vec<T>(){
+	this->m_data[0] = r;
+	this->m_data[1] = i;
+	this->m_data[2] = j;
+	this->m_data[3] = k;
 }
 
 template<class T>
-quat<T>::quat(const vec<T>& other) : vec(other) {
+quat<T>::quat(const vec<T>& other) : vec<T>(other) {
 }
 
 template<class T>
@@ -85,24 +100,36 @@ quat<T>::quat(const quat<T>& other) {
 
 template<class T>
 const T& quat<T>::real(void) const {
-	return m_data[0];
+	return this->m_data[0];
 }
 
 template<class T>
 const T& quat<T>::imaginary(size_t n) const {
 	assert("quat<T>::imaginary() const -- invalid argument" && n < 3);
-	return m_data[n + 1];
+	return this->m_data[n + 1];
 }
 
 template<class T>
 T& quat<T>::real(void) {
-	return m_data[0];
+	return this->m_data[0];
 }
 
 template<class T>
 T& quat<T>::imaginary(size_t n) {
 	assert("quat<T>::imaginary() const -- invalid argument" && n < 3);
-	return m_data[n + 1];
+	return this->m_data[n + 1];
+}
+
+// add visual difference between vectors and quarternions
+template<class T>
+std::ostream& operator<<(std::ostream& out, const quat<T>& 	q) {
+	out << "[q " ;
+	out << q.real() << ", ";
+	for(int ii = 0; ii < 3; ii++){
+		out << q.imaginary(ii) << ", ";
+	}
+	out << "]" ;
+	return out;
 }
 
 #endif
