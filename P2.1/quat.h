@@ -61,7 +61,7 @@ template<class T>
 quat<T> quat<T>::inverse(void) const {
 	// What to do if zero?
 	quat<T> temp;
-	temp = this->conjugate()/ (this->length2()); // length comes from base class
+	temp = this->conjugate()/ (this->length2()); // length comes from base class vector						
 	return temp;
 }
 
