@@ -5,6 +5,7 @@
 #include"quat.h"
 #include <cmath>
 #include <iomanip>
+#include <list>
 
 #define _USE_MATH_DEFINES // for M_PI which is pi
 
@@ -611,6 +612,17 @@ mat<T>::mat(const quat<T>& q){
 template<class T>
 T mat<T>::subdeterminant(size_t i, size_t j) const{
 	// convert to a 3x3 matrix
+	std::list<size_t> row;
+	std::list<size_t> column;
+
+	row.push_back(1); row.push_back(2); row.push_back(3); row.push_back(4);
+	column.push_back(1); column.push_back(2); column.push_back(3); column.push_back(4);
+	
+	row.remove(j); column.remove(i);
+
+	// set up the iterators
+	size_t ii, jj; ii = jj = 0;
+
 
 	// find the determinant of the new matrix	
 
