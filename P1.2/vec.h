@@ -177,19 +177,9 @@ T vec<T>::dot(const vec<T>& other, size_t n) const {
 
 template<class T>
 vec<T> vec<T>::cross(const vec<T>& other) const {
-	// We implement the cross product and the last element is 0 (by default)
-	T result[3]; // the components of the cross product
-	T first[3];// the components of the first vector
-	T second[3]; // the components of the second vector
-	for(int ii = 0; ii < 3; ii++){ // index is 3 because only 3 elements are needed
-		first[ii] = m_data[ii];
-		second[ii] = other(ii);
-	}
-	result[0] = first[1] * second[2] - first[2] * second[1];
-	result[1] = first[2] * second[0] - first[0] * second[2];
-	result[2] = first[0] * second[1] - second[0] * first[1];
-
-	return vec<T>(result[0], result[1], result[2]); 
+	return vec<T>(m_data[1]*other(2) - m_data[2]*other(1),
+				  m_data[2]*other(0) - m_data[0]*other(2),
+				  m_data[0]*other(1) - m_data[1]*other(0)); 
 }
 
 template<class T>
