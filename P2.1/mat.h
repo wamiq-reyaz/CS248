@@ -443,7 +443,7 @@ mat<T> mat<T>::Translation(const vec<T>& t){
 template<class T>
 mat<T> mat<T>::Rotation(const T& deg, const vec<T>& axis){
 	//according to the spec, we need to normalize axis
-	//axis.normalize();
+	// axis.normalize();
 	
 	// We are gonna let u, v, w be the axis components
 	T u = axis(0);
@@ -524,7 +524,7 @@ mat<T> mat<T>::Perspective(const T& fov, const T& aspect, const T& nplane, const
 
 	T m22 = f;
 
-	T m33 = (fplane+nplane)/(nplane-fplane);
+	T m33 = (fplane + nplane)/(nplane-fplane);
 	T m34 = (2*nplane*fplane)/(nplane-fplane);	
 
 	return mat<T>(m11,   0,   0,   0,
