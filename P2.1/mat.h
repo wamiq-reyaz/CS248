@@ -615,18 +615,36 @@ T mat<T>::subdeterminant(size_t i, size_t j) const{
 	std::list<size_t> row;
 	std::list<size_t> column;
 
-	row.push_back(1); row.push_back(2); row.push_back(3); row.push_back(4);
-	column.push_back(1); column.push_back(2); column.push_back(3); column.push_back(4);
+	row.push_back(0); row.push_back(1); row.push_back(2); row.push_back(3);
+	column.push_back(0); column.push_back(1); column.push_back(2); column.push_back(3);
 	
-	row.remove(j); column.remove(i);
+	row.remove(i); column.remove(j); // we dont need these columns and rows
 
 	// set up the iterators
 	size_t ii, jj; ii = jj = 0;
 
+	// and the submatrix
+	T M[3][3];
 
 	// find the determinant of the new matrix	
+	for(std::list<size_t>::iterator it_row = row.begin(); it_row != row.end(); it_row++){
+		// std::cout << "\nThe iterator it_row is here:" << *it_row << std::endl;
+		jj = 0;
+		for(std::list<size_t>::iterator it_col = column.begin(); it_col != column.end(); it_col++){
+			// else copy the elements to the new submatrix
+			// std::cout << "it_col is here:" << *it_col << " ";
+			M[ii][jj] = (*this)(*it_row, *it_col); // 
+			jj++; //onto the next column
+		}
+		ii++; // onto the next row
+	}
 
-	return 0;
+	T det = 0;
+	det += M[0][0] * (M[1][1]*M[2][2] - M[1][2]*M[2][1])\
+		-  M[0][1] * (M[1][0]*M[2][2] - M[1][2]*M[2][0])\
+		+  M[0][2] * (M[1][0]*M[2][1] - M[1][1]*M[2][0]);
+
+	return det;
 }
 
 template<class T>
@@ -635,7 +653,7 @@ T mat<T>::determinant(void) const{
 	T det = 0;
 	int sign = 1;
 	for(size_t ii = 0; ii < 4; ii++){
-		det += sign * (*this)(1, ii) * this->subdeterminant(1, ii);
+		det += sign * (*this)(0, ii) * this->subdeterminant(0, ii);
 		sign *= -1; // flip the sign for the next one
 	}
 	return det;
@@ -653,11 +671,10 @@ mat<T> mat<T>::adjoint(void) const{
 	for(size_t ii = 0; ii < 4; ii++){ // row
 		for(size_t jj = 0; jj < 4; jj++){ // column
 			// for the adjoint, we actually need the transpose of the matrix of cofactors
-			// if we look at the definition of operator(), we do not need the transpose. CHECK
+			// That is given by the subdeterminant
 			temp(ii, jj) = signs(ii, jj) * this->subdeterminant(ii, jj);
 		}
 	}
-	
 	return temp.transpose();
 }
 
