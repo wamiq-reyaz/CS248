@@ -128,7 +128,7 @@ T& quat<T>::imaginary(size_t n) {
 	return this->m_data[n + 1];
 }
 
-// add visual difference between vectors and quarternions
+// add visual difference between vectors and quaternions
 template<class T>
 std::ostream& operator<<(std::ostream& out, const quat<T>& 	q) {
 	out << "[q " ;
