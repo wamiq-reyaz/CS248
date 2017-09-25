@@ -1,16 +1,77 @@
+#include "../common/catch.hpp"
 #include"quat.h"
 #include"mat.h"
 
-#include<iostream>
-
-// #include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec3.hpp> // glm::vec3
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
-// NOTE: glm stores matrices column wise
-#include <glm/gtx/string_cast.hpp> 
+#include <glm/gtx/string_cast.hpp>  // NOTE: glm stores matrices column wise
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+
+#include<iostream>
+#include<cstdlib> // for random
+#include<ctime> // for rand/srand
+
 
 using namespace std;
-int main(int argc, char** argv){
+
+// ranges of floats and doubles
+const float LO = -800;
+const float HI = 800;
+
+// lengths of the quarternions
+const int QUAT_LENGTH = 4;
+
+// shorter names
+typedef quat<float> quatf;
+typedef quat<double> quatd;
+
+quatf rand_quatf(void){
+    /* Arg: void
+    *  Return: quatd
+    * This helper function returns a quat of random
+    * floats
+    */
+        float a[4]; // elements are floats
+        for(size_t ii = 0; ii < QUAT_LENGTH; ii++){
+            //
+            a[ii] = LO + static_cast<float> (rand() /
+                                static_cast<float>(RAND_MAX / (HI - LO))); // TODO insert SE link
+        }
+        // fill the vector
+        quatf temp(a[0], a[1], a[2], a[3]);
+        return temp;
+    }
+    
+quatd rand_quatd(void){
+/* Arg: void
+*  Return: quatd
+* This helper function returns a quat of random
+* doubles
+*/  
+
+    double a[4]; // elements are doubles
+    for(int ii = 0; ii < QUAT_LENGTH; ii++){
+        a[ii] = LO + static_cast<double> (rand() /
+                            static_cast<double>(RAND_MAX/ (HI - LO))); 
+    }
+    // fill the vector
+    quatd temp(a[0], a[1], a[2], a[3]);
+    return temp;
+    }
+
+TEST_CASE("Quarternions," "[quat]"){
+    //seed for the PRNG
+    srand(time(0));
+    
+    SECTION("Multiplication"){
+        for(size_t ii = 0; ii < 100; ii++){
+            quatd q1 = rand_quatd();
+            quatd q2 = rand_quatd();
+        }
+    }
+}
     // quat<float> q1(1,0,1,0), q2(1,0.5,0.5,0.75);
     // vecf v1;
     // std::cout << "Self multipliation and printing "<< q1*q2 << " " << v1 << std::endl;
@@ -27,7 +88,7 @@ int main(int argc, char** argv){
 
     // ++++++++++++++++++++++++++++++++MAT.H+++++++++++++++++++++++++++//
     // cout << "Zero:\n" << matf::Zero() << endl;
-    // cout << "Identity\n" << matd::Identity() << endl;
+    // vecdcout << "Identity\n" << matd::Identity() << endl;
     // cout << "Translation(1,1,1,0):\n" << matf::Translation(vecf(1, 1, 1, 0)) << endl;
     // glm::vec3 translate(1,1,1);
     // glm::mat4x4 ax = glm::translate(translate);
@@ -35,10 +96,12 @@ int main(int argc, char** argv){
 
     // cout << "Translation(3,1,2,0):\n" << matd::Translation(vecd(3, 1, 2, 0)) << endl;
 
-    matf aa; aa.identity();;
+    // matf aa(1,2,3,4,1,5,7,3,9,10,11,1,13,4,15,6); // aa.identity();;
+   // aa = aa*3;
+    // matf rot = matf::Rotation(30, vecf(1,0,0));
     // cout << "Identity matrix" << endl;
-    // cout << "Subdeterminant 1,3:\n" << aa.subdeterminant(1,3) << endl;
-    // cout << "Determinant \n" << aa.determinant() << endl;
+    // cout << "Subdeterminant 1,3:\n" << rot.subdeterminant(3,2) << endl;
+    // cout << std::endl << "Determinant \n" << rot.adjoint() << endl;
     // cout << "Rotation about x \n" << matf::Rotation(30, vecf(1/sqrt(2), 1/sqrt(2), 0)) << endl;
     // glm::vec3 scale( 1.0f, 2.0f,3.0f);
     // glm::mat4x4 ax = glm::scale(scale);
@@ -46,11 +109,22 @@ int main(int argc, char** argv){
 
     // cout << "from glm: \n" << glm::to_string(ax) << endl;
 
-    float a;
-    cout << "adjoint:\n" << aa.adjoint() << endl;
-    cout << "Inverse:\n" << aa.inverse(&a) << endl;
-    cout << "Inverse_transpose:\n" << aa.inverse_transpose(&a) << endl;
+    // cout << "Subdeterminant(1,3):\n" << aa.subdeterminant(1,1) << endl;
+    // float a = aa.determinant();
+    // cout << "adjoint:\n" << aa.adjoint() << endl;
+    // cout << "Inverse:\n" << aa.inverse(&a) << endl;
+    // cout << "Inverse_transpose:\n" << aa.inverse_transpose(&a) << endl;
 
+    // matf rot = matf::Rotation(30, vecf(1,0,0));
+    // cout << "roatation matrix for 30 deg about x " << rot << endl;
+    // // glm::tvec3<float> y(1,0,0);
+    // // glm::mat4x4 glm_rot = glm::rotate(float(30), y);
+    // // cout << "glm says " << glm::to_string(glm_rot);
+    // float det_rot = rot.determinant();
+    // cout << "it's determinant " << det_rot << endl;
+    //  cout << "it's adjoint " << rot.adjoint() << endl;
+    // cout << "it's inverse " << rot.inverse(&det_rot) << endl;
+    // cout << "their product " << (const matf)rot.inverse(&det_rot) * rot << endl;
 
     //#################QUARTERNIOINS###########################
 
@@ -103,6 +177,3 @@ int main(int argc, char** argv){
     // cout << matf::Lookat(eye, center, up) << endl;
     // glm::mat4x4 lookat = glm::lookAt(e,c,u);
     // cout << "from glm:\n" << glm::to_string(lookat) << endl;
-
-    return 0;
-}

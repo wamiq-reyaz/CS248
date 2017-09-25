@@ -2,4 +2,4 @@
 // DO NOT write an tests here
 
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include "../common/catch.hpp"
