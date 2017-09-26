@@ -250,7 +250,50 @@ TEST_CASE("Matrix Extensions", "[mat_ext]"){
         matf expected(0, -3, 2, 0,
                       3, 0, -1, 0,
                       -2, 1, 0, 0,
-                      0, 0, 0, 0);
+                      0, 0, 0, 1);
+        check_matrix_equal(expected, matf::Crossproduct(v));
+    }
+
+    SECTION("Quaternion Constructor"){
+        quatf q1(1, 1, 2, 3);
+        matf expected1(-0.7333333, -0.1333333, 0.66666667, 0,
+                      0.6666667, -0.33333333, 0.66666667, 0,
+                      0.1333333, 0.93333333, 0.33333333, 0, 
+                        0,          0,         0,        1);
+        
+        matf m1(q1);
+        check_matrix_equal(expected1, m1);
+
+        quatf q2(0, 1, 2, 3);
+        matf expected2(-0.8571429, 0.2857143, 0.4285714, 0,
+                        0.2857143, -0.4285714, 0.8571429, 0,
+                        0.4285714, 0.8571429, 0.2857143, 0,
+                        0,           0,        0,        1);
+
+        matf m2(q2);
+
+        check_matrix_equal(expected2, m2);
+    }
+
+    SECTION("mat<T> = quat<T>"){
+        quatf q1(1, 1, 2, 3);
+        matf expected1(-0.7333333, -0.1333333, 0.66666667, 0,
+                      0.6666667, -0.33333333, 0.66666667, 0,
+                      0.1333333, 0.93333333, 0.33333333, 0, 
+                        0,          0,         0,        1);
+        
+        matf m1 = q1;
+        check_matrix_equal(expected1, m1);
+
+        quatf q2(0, 1, 2, 3);
+        matf expected2(-0.8571429, 0.2857143, 0.4285714, 0,
+                        0.2857143, -0.4285714, 0.8571429, 0,
+                        0.4285714, 0.8571429, 0.2857143, 0,
+                        0,           0,        0,        1);
+
+        matf m2 = q2;
+
+        check_matrix_equal(expected2, m2);
     }
 }
     // quat<float> q1(1,0,1,0), q2(1,0.5,0.5,0.75);
