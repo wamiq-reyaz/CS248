@@ -9,7 +9,6 @@
 #include<cstdlib> // for random
 #include<ctime> // for rand/srand
 
-
 using namespace std;
 
 // ranges of floats and doubles
@@ -295,6 +294,150 @@ TEST_CASE("Matrix Extensions", "[mat_ext]"){
 
         check_matrix_equal(expected2, m2);
     }
+
+    SECTION("Determinant based methods"){
+        SECTION("Subdeterminant"){
+            // for the identity matrix, only subdeterminant of form sub(i, i)
+            // will be one. Others must be zero.
+            CHECK(1 == identity.subdeterminant(0, 0));
+            CHECK(1 == identity.subdeterminant(1, 1));
+            CHECK(1 == identity.subdeterminant(2, 2));
+            CHECK(1 == identity.subdeterminant(3, 3));
+
+            CHECK(0 == identity.subdeterminant(0, 1));
+            CHECK(0 == identity.subdeterminant(0, 2));
+            CHECK(0 == identity.subdeterminant(0, 3));
+
+            CHECK(0 == identity.subdeterminant(1, 0));
+            CHECK(0 == identity.subdeterminant(1, 2));
+            CHECK(0 == identity.subdeterminant(1, 3));
+
+            CHECK(0 == identity.subdeterminant(2, 0));
+            CHECK(0 == identity.subdeterminant(2, 1));
+            CHECK(0 == identity.subdeterminant(2, 3));
+
+            CHECK(0 == identity.subdeterminant(3, 0));
+            CHECK(0 == identity.subdeterminant(3, 1));
+            CHECK(0 == identity.subdeterminant(3, 2));
+
+            // if det(A) = k ; det(mA) = k^n, if n is the size of matrix
+            matf diagonal_3 = (matf)identity * 3.0f;
+
+            // 27 = 3*3*3
+            CHECK(27 == diagonal_3.subdeterminant(0, 0));
+            CHECK(27 == diagonal_3.subdeterminant(1, 1));
+            CHECK(27 == diagonal_3.subdeterminant(2, 2));
+            CHECK(27 == diagonal_3.subdeterminant(3, 3));
+
+            CHECK(0 == diagonal_3.subdeterminant(0, 1));
+            CHECK(0 == diagonal_3.subdeterminant(0, 2));
+            CHECK(0 == identity.subdeterminant(0, 3));
+
+            CHECK(0 == diagonal_3.subdeterminant(1, 0));
+            CHECK(0 == diagonal_3.subdeterminant(1, 2));
+            CHECK(0 == diagonal_3.subdeterminant(1, 3));
+
+            CHECK(0 == diagonal_3.subdeterminant(2, 0));
+            CHECK(0 == diagonal_3.subdeterminant(2, 1));
+            CHECK(0 == diagonal_3.subdeterminant(2, 3));
+
+            CHECK(0 == diagonal_3.subdeterminant(3, 0));
+            CHECK(0 == diagonal_3.subdeterminant(3, 1));
+            CHECK(0 == diagonal_3.subdeterminant(3, 2));
+
+            // a random matrixdeterminant calculator
+            matf m1(36.3, 22.58, 10.3, 22,
+                    0, 56.4, -18.6, 0.36,
+                    -33.62, -10.3, 12, 16.64,
+                    0, 0, 0, 1);
+
+            float expected = 51264.01295999999;
+            CHECK(fabs(expected -  m1.subdeterminant(3, 3)) < 1e-2);
+        }
+
+        SECTION("Determinant"){
+            // identity has determinant 1
+            CHECK(1 == identity.determinant());
+
+            // det(kA) = k^n * det(A)
+            matf m1 = (matf)identity * 2.0f;
+            CHECK(16 == m1.determinant());
+
+            matf m2 = (matf) identity *0.0f;
+            CHECK(0 == m2.determinant());
+
+            // all rotation matrices must have determinant 1
+            vecf x(1,0,0);
+            CHECK(1 == matf::Rotation(30, x).determinant());
+
+            // a random matrix
+            matf m3(2.1, 3.2, 3, 6.3,
+                    5.4, 22.2, 1, -1.2,
+                    3.6, 2.5, 4.3, 1.1,
+                    3, 7, -8.9, -10);
+            
+            CHECK(-3664.0704 == m3.determinant());
+        }
+
+        SECTION("Adjoint"){
+            // identity returns identity
+            check_matrix_equal(identity, identity.adjoint());
+
+            // kI returns k^n-1 I 
+            matf m1 = (matf) identity * 3.5;
+            matf expected = (matf) identity * 3.5f*3.5*3.5;
+            check_matrix_equal(m1.adjoint(), expected);
+        }
+
+        SECTION("Inverse"){
+            // I should return I
+            float det;
+            check_matrix_equal(identity, identity.inverse(&det));
+
+            // kI should return 1/k I
+            matf m1 = (matf)identity * 5;
+            check_matrix_equal((matf)identity*(1/5), m1.inverse());
+
+            // random matrix
+            matf m2(1, 2, 3.3, 5.6,
+                    1.2, 3.1, 3.6, 2.9,
+                    -9.6, -8.5, -4, 6.3,
+                    8.1, 5.6, 2.3, 3.3);
+
+            matf expected2(0.95815467, -1.079791847, -0.272003189, -0.1571970,
+                          -1.875054922, 1.929748482, 0.4978457525, 0.5356390084,
+                          1.4274579625, -1.188204683, -0.445330001, -0.527997575,
+                          -0.163985160, 0.203816131, 0.1331965516, 0.147912678);
+
+            check_matrix_equal(m2.inverse(&det), expected2);
+        }
+
+        SECTION("Inverse Transpose"){
+            // I should return I
+            float det;
+            check_matrix_equal(identity, identity.inverse_transpose(&det));
+
+            // kI should return 1/k I
+            matf m1 = (matf)identity * 5;
+            check_matrix_equal((matf)identity*(1/5), m1.inverse_transpose(&det));
+
+            // random matrix
+            matf m2(1, 2, 3.3, 5.6,
+                    1.2, 3.1, 3.6, 2.9,
+                    -9.6, -8.5, -4, 6.3,
+                    8.1, 5.6, 2.3, 3.3);
+
+            matf expected2(0.95815467, -1.079791847, -0.272003189, -0.1571970,
+                          -1.875054922, 1.929748482, 0.4978457525, 0.5356390084,
+                          1.4274579625, -1.188204683, -0.445330001, -0.527997575,
+                          -0.163985160, 0.203816131, 0.1331965516, 0.147912678);
+            
+            expected2 = expected2.transpose();
+
+            check_matrix_equal(m2.inverse(&det), expected2);
+        }
+    }
+
 }
     // quat<float> q1(1,0,1,0), q2(1,0.5,0.5,0.75);
     // vecf v1;
@@ -317,7 +460,6 @@ TEST_CASE("Matrix Extensions", "[mat_ext]"){
     // glm::vec3 translate(1,1,1);
     // glm::mat4x4 ax = glm::translate(translate);
     // cout << "from glm: \n" << glm::to_string(ax) << endl;
-
     // cout << "Translation(3,1,2,0):\n" << matd::Translation(vecd(3, 1, 2, 0)) << endl;
 
     // matf aa(1,2,3,4,1,5,7,3,9,10,11,1,13,4,15,6); // aa.identity();;
