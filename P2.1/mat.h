@@ -13,7 +13,7 @@ template<class T>
 class mat {
 public:
 	mat(void);																					///< default constructor
-	mat(const T& m00, const T& m01 = T(0), const T& m02 = T(0), const T& m03 = T(0),			///< initialized constructor
+	explicit mat(const T& m00, const T& m01 = T(0), const T& m02 = T(0), const T& m03 = T(0),			///< initialized constructor
 		const T& m10 = T(0), const T& m11 = T(0), const T& m12 = T(0), const T& m13 = T(0),
 		const T& m20 = T(0), const T& m21 = T(0), const T& m22 = T(0), const T& m23 = T(0),
 		const T& m30 = T(0), const T& m31 = T(0), const T& m32 = T(0), const T& m33 = T(0));
