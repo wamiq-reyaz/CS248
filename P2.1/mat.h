@@ -578,7 +578,7 @@ const mat<T>& mat<T>::operator=(const quat<T>& q){
 
 template<class T>
 mat<T>::mat(const quat<T>& q){
-	// normalize the components quarternion
+	// normalize the components of the quarternion
 	T norm = q.length();
 	T r = q.real() / norm;
 	T i = q.imaginary(0) / norm;
@@ -684,6 +684,7 @@ mat<T> mat<T>::inverse(T* det) const{
 		return mat<T>(); // a zero initialized matrix
 	}
 	else{
+		*det = this->determinant();
 		return this->adjoint()/ *det;
 	}
 }
@@ -694,7 +695,8 @@ mat<T> mat<T>::inverse_transpose(T* det) const{
 		return mat<T>(); // a zero initialized matrix
 	}
 	else{
-		return this->adjoint().transpose() / *det;
+		*det = this->determinant();
+		return this->adjoint().transpose()/ *det;
 	}
 }
 
