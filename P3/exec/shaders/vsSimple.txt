@@ -1,0 +1,21 @@
+#version 150    // version of GLSL to use
+
+// ============================================================
+// PROBLEM 1 
+// SIMPLE SHADER ( vertex shader )
+// ============================================================
+
+in      vec3 vtx_position;        // input register:  the position of the vertex
+in      vec3 vtx_color;           // input register:  the color of the vertex
+
+out     vec3 frg_color;           // output register: the unmodified color of the vertex
+
+uniform mat4 Model;               // uniform (i.e., same for all vertices) Model matrix
+uniform mat4 View;                // uniform (i.e., same for all vertices) View matrix
+uniform mat4 Projection;          // uniform (i.e., same for all vertices) Projection matrix
+
+void main(void) {
+	// TODO: Figure out how this works
+	frg_color = vtx_color;
+	gl_Position = Projection*View*Model*vec4(vtx_position.xyz,1.0f);
+}

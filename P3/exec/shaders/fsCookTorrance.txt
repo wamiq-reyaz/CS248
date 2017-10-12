@@ -1,0 +1,115 @@
+#version 150
+
+// ============================================================
+// PROBLEM 3 
+// FRAGMENT PHONG SHADER ( fragment shader )
+// ============================================================
+
+
+// Input registers (from vertex shader)
+	in	vec3 frg_position;         // fragment position in camera space
+	in	vec3 frg_color;		   // fragment color in camera space
+	in	vec3 frg_normal;	   // fragment normal in camera space
+	in	vec3 frg_camera_pos;       // camera position in camera space
+	in	vec3 frg_light_pos;        // light position in CAMERA space
+	flat in int  requirements_met;     // are all requirements met ?
+
+// Uniform registers
+	uniform vec3  L_ambient;           // light ambient color
+	uniform vec3  L_diffuse;           // diffuse light color
+	uniform vec3  L_specular;          // specular light color
+	uniform float L_exponent;          // specular exponent
+
+// Output color
+	out	vec4 result;               // RGBA output color for this fragment
+
+// constant
+	const	float PI = 3.1415927f;
+
+// helper functions
+vec3 viewDir(void){
+	return normalize(frg_camera_pos - frg_position);
+}
+
+vec3 lightDir(void){
+	return normalize(frg_light_pos - frg_position);
+}
+
+// globally normalize normal
+vec3 normal = normalize(frg_normal);
+
+// Beckmann distribution
+float D(vec3 N, vec3 L, vec3 V, float m) {
+	// TODO: compute the Beckmann distribution as per assignment
+	// let us setup the stage first
+	vec3 frg_halfway_cam = normalize(L + V);
+	float alpha = acos(dot(N, frg_halfway_cam));
+	float cos2_alpha = cos(alpha) * cos(alpha);
+	float gamma = (1 - cos2_alpha)/(cos2_alpha * m*m);
+
+	float D = exp(-gamma)/(PI * m*m * cos2_alpha*cos2_alpha);
+
+	return D;
+}
+
+// Fresnel term
+vec3 F(vec3 rho_0, vec3 N, vec3 V) {
+	// TODO: compute the Fresnel term as per assignment
+	float phi = acos(dot(N,V));
+	float cos_phi = cos(phi);
+	vec3 F = rho_0 + (vec3(1.0, 1.0, 1.0) - rho_0)* pow((1 - cos_phi), 5);
+	return F;
+}
+
+// Geometric term
+float G(vec3 N, vec3 V, vec3 L) {
+	// TODO: compute the Geometry term as per assignment
+	vec3 H = normalize(L + V);
+
+	float H_N = dot(H, N);
+	float V_N = dot(V, N);
+	float V_H = dot(V, H);
+	float L_N = dot(L, N);
+
+	float temp_min = min(1, 2*H_N*V_N/V_H);
+	float G = min(temp_min, 2*H_N*L_N*V_H);
+
+	return G;
+}
+	
+
+void main(void) {
+	if (requirements_met==0) {
+		result = vec4(1.0,0.0,0.0,1.0);
+		return;
+	}
+
+	// TODO: replace below code with your implementation of the Cook-Torrance light model
+		// the lighting direction
+
+	// reusable quantities
+	vec3 frg_lightdir_cam  = lightDir();
+	vec3 frg_viewdir_cam = viewDir();
+
+	float V_N = dot(normal, frg_viewdir_cam);
+	float N_L = dot(normal, frg_lightdir_cam);
+
+	float m = 0.25;
+	vec3 rho_0 = vec3(0.8, 0.8, 0.8);
+
+	float D = D(normal, frg_lightdir_cam, frg_viewdir_cam, m);
+	vec3 F = F(rho_0, normal, frg_viewdir_cam);
+	float G = G(normal, frg_viewdir_cam, frg_lightdir_cam);
+
+	float specular_denominator = (PI * V_N * N_L);
+
+	// calculate angle
+	float cos_theta = max(0, dot(normal, frg_lightdir_cam)); //this is not real cos_theta. But we dont need -ve values
+
+	vec3 I_ambient = L_ambient;
+	vec3 I_diffuse = L_diffuse * cos_theta;
+	vec3 I_specular = L_specular * (D*F*G) /specular_denominator;
+
+	vec3 resultant = (I_ambient + I_diffuse + I_specular) * frg_color;
+	result = vec4(resultant, 1.0);
+}

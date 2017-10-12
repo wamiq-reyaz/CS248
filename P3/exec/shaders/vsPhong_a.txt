@@ -1,0 +1,88 @@
+#version 150
+
+// ============================================================
+// PROBLEM 3 
+// VERTEX PHONG SHADER ( vertex shader )
+// ============================================================
+
+// Input registers
+	in      vec3 vtx_position;
+	in      vec3 vtx_color;
+	in      vec3 vtx_normal;
+	
+// Uniform registers
+	uniform mat4 Model;                // model matrix
+	uniform mat4 View;                 // view matrix
+	uniform mat4 Projection;           // projection matrix
+	uniform mat4 inv_Model;            // inverse model matrix
+	uniform mat4 inv_View;             // inverse view matrix
+	uniform mat4 inv_Projection;       // inverse projection matrix
+	uniform bool has_position;         // true iff position available
+	uniform bool has_color;            // true iff color available
+	uniform bool has_normal;           // true iff normal available	
+
+// Light model
+	uniform vec3  L_position;          // light position in WORLD-space
+	uniform vec3  L_ambient;           // light ambient color
+	uniform vec3  L_diffuse;           // diffuse light color
+	uniform vec3  L_specular;          // specular light color
+	uniform float L_exponent;          // specular exponent
+
+// Output registers
+	out	vec3 frg_color;		   // fragment color in world space
+
+void main(void) {
+	if (has_position && has_normal) {
+		// TODO: implement the per-Vertex Phong light model here.
+		//       compute position, normal, etc. in CAMERA SPACE
+		//       replace below light with your result
+
+		// Reusable quantities
+		mat4 MV = View * Model;
+		mat4 inv_MV = transpose(inv_View)*transpose(inv_Model);
+ 
+		// vertices live in model space
+		vec3 vtx_position_cam = (MV * vec4(vtx_position, 1.0)).xyz;
+
+		// let us set up the light in camera space from th world space
+		vec3 L_position_cam = (View * vec4(L_position, 1.0)).xyz;
+		//vec3 L_position_cam = vec3((View * vec4(0.0,  5.0, 0.0, 1.0)).xyz);
+
+		//let us get the normals from the model space
+		vec3 vtx_normal_cam = (inv_MV * vec4(vtx_normal, 1.0f)).xyz;
+		vtx_normal_cam = normalize(vtx_normal_cam);
+
+		// camera will always be at the origin
+		vec3 cam_position_cam = vec3(0.0, 0.0, 0.0);
+
+		// the lighting direction
+		vec3 vtx_lightdir_cam = normalize(vec3(L_position_cam - vtx_position_cam));
+
+		// the viewing direction
+		vec3 vtx_viewdir_cam = normalize(vec3(cam_position_cam - vtx_position_cam));
+
+		// reflection vector
+		vec3 vtx_reflectdir_cam = reflect(-vtx_lightdir_cam, vtx_normal_cam);
+
+		// calculate angles
+		float cos_theta = max(0, dot(vtx_normal_cam, vtx_lightdir_cam)); //this is not actually cos_theta. But we dont need -ve values
+		float cos_phi = max(0, dot(vtx_reflectdir_cam, vtx_viewdir_cam)); // also not strictly true
+
+		vec3 I_ambient = L_ambient;
+		vec3 I_diffuse = L_diffuse * cos_theta;
+		vec3 I_specular = L_specular * pow(cos_phi, L_exponent);
+
+		frg_color = (I_ambient + I_diffuse + I_specular) * vtx_color;
+
+	}
+	else {
+		frg_color = vec3(1.0f,0.0f,0.0f);
+	}
+	
+	gl_Position = Projection*View*Model*vec4(vtx_position.xyz,1.0f);
+
+	// OpenGL causes issues otherwise
+	vec3 useless = vtx_color;
+	mat4 useless1 = inv_Projection;
+	if(has_color); // do nothing;
+}

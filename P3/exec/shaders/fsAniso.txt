@@ -1,0 +1,78 @@
+#version 150
+
+// ============================================================
+// PROBLEM 7 
+// ANISOTROPIC SHADER ( fragment shader )
+// ============================================================
+
+// Input registers (from vertex shader)
+	in	vec3 frg_position;         // fragment position in camera space
+	in	vec3 frg_color;		   // fragment color in camera space
+	in	vec3 frg_camera_pos;       // camera position in camera space
+	in	vec3 frg_obj_pos;	   // object space position
+	in	vec3 frg_light_pos;        // light position in camera space
+	flat in int  requirements_met;     // are all requirements met ?
+
+// Uniform registers
+	uniform vec3  L_ambient;           // light ambient color
+	uniform vec3  L_diffuse;           // diffuse light color
+	uniform vec3  L_specular;          // specular light color
+	uniform float L_exponent;          // specular exponent
+	uniform mat4  inv_Model;           // inverse model matrix
+	uniform mat4  inv_View;            // inverse view matrix
+
+// Output color
+	out	vec4 result;               // RGBA output color for this fragment
+
+vec3 compute_T(void) {
+	// TODO: compute a tangent direction as per assignment
+
+	// first compute polar coordinates.
+	vec3 pos_normalized = normalize(frg_obj_pos);
+	float u = acos(pos_normalized.z);
+	float v = atan(pos_normalized.y, pos_normalized.x);
+	vec3 T = vec3(
+				cos(u)*cos(v),
+				cos(u)*sin(v),
+				-sin(u)
+		);
+
+	T = vec3((transpose(inv_View)*transpose(inv_Model)*vec4(T, 1.0f)).xyz);
+	T = normalize(T);
+
+	return T;
+}
+
+void main(void) {
+	if (requirements_met==0) {
+		result = vec4(1.0,0.0,0.0,1.0);
+		return;
+	}
+
+	// TODO: implement compute_T() above as per assignment
+	// TODO: replace the following line by the anisotropic light model
+
+	// // the lighting direction
+	vec3 frg_lightdir_cam = normalize(frg_light_pos - frg_position);
+
+	// // the viewing direction
+	vec3 frg_viewdir_cam = normalize(frg_camera_pos - frg_position);
+
+	// // calculate angles
+	// first we need the T vector
+	vec3 T = compute_T();
+
+	// and the two dot products
+	float L_T = dot(frg_lightdir_cam, T);
+	float V_T = dot(frg_viewdir_cam	, T);
+
+	float cos_phi = max(0, sqrt(1.0 - L_T*L_T));
+	float cos_theta = max(0, sqrt(1.0 - L_T	*L_T) * sqrt(1.0 - V_T*V_T) - L_T * V_T);
+
+	vec3 I_ambient = L_ambient;
+	vec3 I_diffuse = L_diffuse * cos_phi	 ;
+	vec3 I_specular = L_specular * pow(cos_theta, L_exponent);
+
+	vec3 resultant = (I_ambient + I_diffuse + I_specular) * frg_color;
+	result = vec4(resultant, 1.0);
+}

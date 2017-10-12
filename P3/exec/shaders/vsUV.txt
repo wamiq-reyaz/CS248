@@ -1,0 +1,131 @@
+#version 150
+
+// ============================================================
+// PROBLEM 6
+// PARAMETRIC SHADER ( vertex shader )
+// ============================================================
+
+
+// Input registers
+	in	vec3 vtx_position;
+	in  vec3 vtx_parameter;
+	in  vec3 vtx_color;
+	
+// Uniform registers
+	uniform mat4 Model;                // model matrix
+	uniform mat4 View;                 // view matrix
+	uniform mat4 Projection;           // projection matrix
+	uniform mat4 inv_Model;            // inverse model matrix
+	uniform mat4 inv_View;             // inverse view matrix
+	uniform mat4 inv_Projection;       // inverse projection matrix
+	uniform bool has_position;         // true iff position available
+	uniform bool has_color;            // true iff color available
+	uniform bool has_normal;           // true iff normal available	
+	uniform bool has_parameter;        // true iff parametric input
+	uniform vec3 L_position;           // light position in WORLD space
+
+// Output registers
+	out	vec3 frg_position;         // fragment position in camera space
+	out	vec3 frg_color;		   // fragment color in camera space
+	out	vec3 frg_normal;	   // fragment normal in camera space
+	out	vec3 frg_tangent;          // tangent in camera space
+	out	vec3 frg_bitangent;        // bitangent in camera space
+	out	vec3 frg_camera_pos;       // camera position in camera space
+	out	vec2 frg_tex_coord;	   // texture coordinate
+	out     vec3 frg_light_pos;        // light position in CAMERA space
+	flat out int requirements_met;     // are all requirements met ?
+
+// constants
+	const 	float PI = 3.1415927f;
+
+void main(void) {
+	if (!has_parameter) {
+		requirements_met = 0;
+		gl_Position = Projection*View*Model*vec4(vtx_position.xyz,1.0f);
+		return;
+	}
+
+	requirements_met = 1;
+	frg_color = vec3(0.63, 0.6, 0.6);
+
+	float u = vtx_position.x;
+	float v = vtx_position.y;
+	const float R = 1.0f;
+	const float r = 0.25f;
+
+	// TODO: use parameters uv to compute a parametric torus.
+	//   u and v will both range from 0..2Pi.
+	//   compute frg_position from uv (in camera space)s
+	//	 compute frg_tangent from uv (unit tangent in camera space)
+	//	 compute frg_bitangent from uv (unit bitangent in camera space)
+	//	 compute frg_camera_pos (camera position in camera space)
+	//	 compute frg_tex_coord (texture coordinate, x ranges from 0..4 and y ranges from 0..1
+	//   compute frg_light_pos (light position in camera space)
+	//	 replace below line as needed
+
+	// reusable variables
+	float cosu = cos(u);
+	float cosv = cos(v);
+	float sinu = sin(u);
+	float sinv = sin(v);
+
+	// p(u,v) is the parameterized surface
+	vec3 p;
+	p.x = (R + r*cosv) * cosu;
+	p.y = (R + r*cosv) * sinu;
+	p.z = r * sinv;
+	
+	// TANGENT
+	// in object space
+	frg_tangent.x = -(R + r*cosv) * sinu;
+	frg_tangent.y = (R + r*cosv) * cosu;
+	frg_tangent.z = 0;
+	// frg_color = 0.5*frg_tangent + 0.5;
+	
+	// BI-TANGENT
+	// in object space
+	frg_bitangent.x = -r*sinv*cosu;
+	frg_bitangent.y = -r*sinv*sinu;
+	frg_bitangent.z = r*cosv;
+	// frg_color = 5*frg_bitangent;
+
+	// NORMAL
+	// in object space
+	frg_normal = cross(frg_tangent,frg_bitangent);
+	// frg_normal.x = cos(u) * cos(v);
+	// frg_normal.y = sin(u) * cos(v);
+	// frg_normal.z = sin(v);
+	// frg_color = max(frg_normal, 0);
+
+	// Reusable quantities
+	mat4 MV = View * Model;
+	mat4 inv_MV = transpose(inv_View)*transpose(inv_Model);
+
+	// transform to camera space
+	frg_position = (MV * vec4(p.xyz,1.0f)).xyz; 
+
+	frg_tangent = normalize(frg_tangent);
+	frg_tangent = (inv_MV * vec4(frg_tangent, 1.0)).xyz; 
+
+	frg_bitangent = normalize(frg_bitangent);
+	frg_bitangent = (inv_MV * vec4(frg_bitangent, 1.0)).xyz;
+	
+	frg_normal = normalize(frg_normal);
+	frg_normal = (inv_MV * vec4(frg_normal, 1.0)).xyz;
+	
+
+	// compute frg_camera_pos (camera position in camera space)
+	frg_camera_pos = vec3(0.0, 0.0, 0.0);
+	
+	// compute frg_light_pos (light position in camera space)
+	// frg_light_pos = vec3((View*vec4(2.0, 0.0, 0.0, 1.0f)).xyz); // DEBUG: Constant camera Position
+	frg_light_pos = (View*vec4(L_position.xyz, 1.0f)).xyz;
+
+	//compute texture coordinates
+	frg_tex_coord = vec2(4.0 * u /(2.0*PI), v/(2.0*PI));
+
+	gl_Position = Projection*View*Model*vec4(p.xyz,1.0f);
+
+	// for good luck
+	vec3 frg_parameter = vtx_parameter;
+}

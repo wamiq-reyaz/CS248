@@ -1,0 +1,55 @@
+#version 150
+
+// ============================================================
+// PROBLEM 4 
+// BLINN-PHONG SHADER ( fragment shader )
+// ============================================================
+
+// Input registers (from vertex shader)
+	in	vec3 frg_position;         // fragment position in camera space
+	in	vec3 frg_color;		   // fragment color in camera space
+	in	vec3 frg_normal;	   // fragment normal in camera space
+	in	vec3 frg_camera_pos;       // camera position in camera space
+	in	vec3 frg_light_pos;        // light position in CAMERA space
+	flat in int  requirements_met;     // are all requirements met ?
+
+// Uniform registers
+	uniform vec3  L_ambient;           // light ambient color
+	uniform vec3  L_diffuse;           // diffuse light color
+	uniform vec3  L_specular;          // specular light color
+	uniform float L_exponent;          // specular exponent
+
+// Output color
+	out	vec4 result;               // RGBA output color for this fragment
+
+void main(void) {
+	if (requirements_met==0) {
+		result = vec4(1.0,0.0,0.0,1.0);
+		return;
+	}
+	
+	// the lighting direction
+	vec3 frg_lightdir_cam = normalize(frg_light_pos - frg_position);
+
+	// the viewing direction
+	vec3 frg_viewdir_cam = normalize(frg_camera_pos - frg_position);
+
+	// normal vector
+	vec3 normal = normalize(frg_normal);
+
+	// halfway vector
+	vec3 frg_halfway_cam = normalize(frg_viewdir_cam + frg_lightdir_cam);
+
+	// calculate angles
+	float cos_theta = max(0, dot(normal, frg_lightdir_cam)); //this is not real cos_theta. But we dont need -ve values
+	// this is the only thing that changes for Blinn_Phong
+	float cos_phi = max(0, dot(normal, frg_halfway_cam)); // also not strictly true
+
+	vec3 I_ambient = L_ambient;
+	vec3 I_diffuse = L_diffuse * cos_theta;
+	vec3 I_specular = L_specular * pow(cos_phi, L_exponent);
+
+	// vec3 resultant = vec3(cos_theta, 0.0, 0.0);
+	vec3 resultant = (I_ambient + I_diffuse + I_specular) * frg_color;
+	result = vec4(resultant, 1.0);
+}

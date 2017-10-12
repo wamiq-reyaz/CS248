@@ -1,0 +1,70 @@
+#version 150
+
+// ============================================================
+// PROBLEM 7 
+// ANISOTROPIC SHADER ( vertex shader )
+// ============================================================
+
+// Input registers
+	in      vec3 vtx_position;
+	in      vec3 vtx_color;
+	in      vec3 vtx_normal;
+	
+// Uniform registers
+	uniform mat4 Model;                // Model matrix
+	uniform mat4 View;                 // View matrix
+	uniform mat4 Projection;           // Projection matrix
+	uniform mat4 inv_Model;            // inverse Model matrix
+	uniform mat4 inv_View;             // inverse View matrix
+	uniform mat4 inv_Projection;       // inverse Projection matrix
+	uniform bool has_position;         // true iff position available
+	uniform bool has_color;            // true iff color available
+	uniform bool has_normal;           // true iff normal available	
+	uniform vec3 L_position;           // Light position in WORLD space
+
+// Output registers
+	out	vec3 frg_position;         // fragment position in camera space
+	out	vec3 frg_color;		   // fragment color in camera space
+	out	vec3 frg_camera_pos;       // camera position in camera space
+	out	vec3 frg_obj_pos;	   // object space position for fragment shader
+	out	vec3 frg_light_pos;        // light position in CAMERA space
+	flat out int requirements_met;     // are all requirements met ?
+
+	flat out mat4 model;
+	flat out mat4 view;
+
+void main(void) {
+	requirements_met = (has_position && has_normal) ? 1 : 0;
+	frg_color      = vec3(0.2, 0.48, 1.0);
+
+	// TODO: compute frg_position   (vertex position in camera space)
+	//       compute frg_camera_pos (camera position in camera space)
+	//       compute frg_obj_pos    (vertex position in object space)
+	//       compute frg_light_pos  (light position in camera space)
+	// You might want to override frg_color with a constant
+
+	// repeated constants
+	mat4 MV = Model*View;
+	mat4 invMV = transpose(inv_Model) * transpose(inv_View);
+
+	frg_position = (MV*vec4(vtx_position, 1.0f)).xyz;
+	
+	// compute frg_obj_pos
+	frg_obj_pos = vtx_position;
+	
+	// compute frg_camera_pos (camera position in camera space)
+	frg_camera_pos = vec3(0.0, 0.0, 0.0);
+	
+	// compute frg_light_pos (light position in camera space)
+	frg_light_pos = (View*vec4(0.0, 5.0, 0.0, 1.0f)).xyz; // DEBUG: Constant camera Position
+	// frg_light_pos = vec3((View*vec4(L_position.xyz, 1.0f)).xyz);
+
+	// OpenGL complains if variables are left unused
+	mat4 frg_inv = inv_Projection;
+	vec2 useless = L_position.xy;
+
+	model = Model;
+	view = View;
+
+	gl_Position    = Projection*View*Model*vec4(vtx_position.xyz,1.0f);
+}

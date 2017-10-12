@@ -1,0 +1,18 @@
+#version 150
+
+// ============================================================
+// PROBLEM 3 
+// VERTEX PHONG SHADER ( fragment shader )
+// ============================================================
+
+// Input registers (from vertex shader)
+	in	vec3 frg_color;            // fragment color
+
+
+// Output color
+	out	vec4 result;               // RGBA output color for this fragment
+
+void main(void) {
+	// Nothing to do in this shader
+	 result = vec4(frg_color,1.0);
+}

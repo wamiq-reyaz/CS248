@@ -1,0 +1,67 @@
+#version 150
+
+// ============================================================
+// PROBLEM 5 
+// TOON SHADER ( vertex shader )
+// ============================================================
+
+// Input registers
+	in      vec3 vtx_position;
+	in      vec3 vtx_color;
+	in      vec3 vtx_normal;
+	
+// Uniform registers
+	uniform mat4 Model;                // model matrix
+	uniform mat4 View;                 // view matrix
+	uniform mat4 Projection;           // projection matrix
+	uniform mat4 inv_Model;            // inverse model matrix
+	uniform mat4 inv_View;             // inverse view matrix
+	uniform mat4 inv_Projection;       // inverse projection matrix
+	uniform bool has_position;         // true iff position available
+	uniform bool has_color;            // true iff color available
+	uniform bool has_normal;           // true iff normal available	
+	uniform vec3 L_position;           // light position in WORLD space
+
+// Output registers
+	out	vec3 frg_position;         // fragment position in camera space
+	out	vec3 frg_color;		   // fragment color in camera space
+	out	vec3 frg_normal;	   // fragment normal in camera space
+	out	vec3 frg_camera_pos;       // camera position in camera space
+	out	vec3 frg_light_pos;        // light position in camera space
+	flat out int requirements_met;     // are all requirements met ?
+
+void main(void) {
+	requirements_met = (has_position && has_normal) ? 1 : 0;
+	if (has_color) frg_color = vtx_color;
+	else           frg_color = vec3(1.0,1.0,1.0);
+
+	// TODO: compute frg_position (position in camera space)
+	//       compute frg_normal (unit normal in camera space)
+	//       compute frg_camera_pos (camera position in camera space)
+	//       compute frg_light_pos (light position in camera space)
+	
+	// Reusable quantities
+	mat4 MV = View * Model;
+	mat4 inv_MV = transpose(inv_View)*transpose(inv_Model);
+
+	frg_position = (MV * vec4(vtx_position, 1.0f)).xyz;
+	
+	// compute frg_normal (unit normal in camera space)
+	// if the vectors are tranformed by A, the normals are transformed by
+    // (A.inv)^T
+	frg_normal = (inv_MV*vec4(vtx_normal, 1.0f)).xyz;
+	frg_normal = normalize(frg_normal);  
+	
+	// compute frg_camera_pos (camera position in camera space)
+	frg_camera_pos = vec3(0.0, 0.0, 0.0);
+	
+	// compute frg_light_pos (light position in camera space)
+	// frg_light_pos = vec3((View*vec4(0.0, 5.0, 6.0, 1.0f)).xyz); // DEBUG: Constant camera Position
+	frg_light_pos = (View*vec4(L_position.xyz, 1.0f)).xyz;
+
+	// OpenGL complains if variables are left unused
+	mat4 frg_inv = inv_Projection;
+	vec2 useless = L_position.xy;
+
+	gl_Position = Projection*View*Model*vec4(vtx_position.xyz,1.0f);
+}

@@ -1,0 +1,14 @@
+#version 150		// GLSL version of the fragment shader
+
+// ============================================================
+// PROBLEM 1 
+// SIMPLE SHADER ( fragment shader )
+// ============================================================
+
+out vec4 result;
+in vec3 frg_color;
+
+void main(void) {
+	// TODO: Figure out how this works
+	result = vec4(frg_color.xyz,1.0f);
+}

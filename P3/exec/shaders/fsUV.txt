@@ -1,0 +1,91 @@
+#version 150
+
+// ============================================================
+// PROBLEM 6 
+// PARAMETRIC SHADER ( fragment shader )
+// ============================================================
+
+// Input registers (from vertex shader)
+	in	vec3      frg_position;        // fragment position in camera space
+	in	vec3      frg_color;           // fragment color in camera space
+	in	vec3      frg_normal;	       // fragment normal in camera space
+	in	vec3      frg_tangent;         // fragment tangent in camera space
+	in	vec3      frg_bitangent;       // fragment bitangent in camera space
+	in	vec3      frg_camera_pos;      // camera position in camera space
+	in	vec2      frg_tex_coord;       // fragment texture coordinates
+	in	vec3      frg_light_pos;       // light position in CAMERA space
+	flat in int       requirements_met;    // are all requirements met ?
+
+// Uniform registers
+	uniform vec3  	  L_ambient;           // light ambient color
+	uniform vec3 	  L_diffuse;           // diffuse light color
+	uniform vec3      L_specular;          // specular light color
+	uniform float 	  L_exponent;          // specular exponent
+	uniform sampler2D texNormalMap;        // normal map sampler
+
+// Output color
+	out	vec4 result;               // RGBA output color for this fragment
+
+void main(void) {
+	if (requirements_met==0) {
+		result = vec4(1.0,0.0,0.0,1.0);
+		return;
+	}
+	
+	// This line obtains a normal in [0,1]^3 from the normal map
+	vec3 normal = texture2D(texNormalMap,frg_tex_coord.xy).xyz;
+
+	// TODO: remap the normal to the range [-1,1]^3
+	//       Build a tangent space matrix (mat3) using frg_normal, frg_tangent, frg_bitangent
+	//	 Rotate normal into the tangent frame and use it to evaluate a Phong light model
+	//	 Replace below line with your result
+
+	// the lighting direction
+	vec3 frg_lightdir_cam = normalize(frg_light_pos - frg_position);
+
+	// the viewing direction
+	vec3 frg_viewdir_cam = normalize(frg_camera_pos - frg_position);
+
+	// normal vector
+	vec3 normal_normalized = normalize(frg_normal);
+
+	// =================================== USING PARAMETERIZED MODEL NORMALS ==========================================
+	//halfway vector
+	// vec3 frg_halfway_cam = normalize(frg_viewdir_cam + frg_lightdir_cam);
+
+	// // calculate angles
+	// float cos_theta = max(0, dot(normal_normalized, frg_lightdir_cam)); //this is not real cos_theta. But we dont need -ve values
+	// // this is the only thing that changes for Blinn_Phong
+	// float cos_phi = max(0, dot(normal_normalized, frg_halfway_cam)); // also not strictly true
+
+
+	// ====================================== USING TEXTURE NORMAL =====================================================
+	// expand normals first
+	normal = normalize(2.0 * normal - vec3(1.0, 1.0, 1.0));
+
+	// matrix from the tangent space to canonical 
+	vec3 tangent_normalized = normalize(frg_tangent);
+	vec3 bitangent_normalized = normalize(frg_bitangent);
+	mat3 objectToTangent = mat3(tangent_normalized, bitangent_normalized, normal_normalized);
+
+	// nw transform it to camera space
+	normal = transpose(objectToTangent) * normal;
+	normal = normalize(normal); 
+
+	//halfway vector
+	vec3 frg_halfway_cam = normalize(frg_viewdir_cam + frg_lightdir_cam);
+
+	// calculate angles
+	float cos_theta = max(0, dot(normal, frg_lightdir_cam)); //this is not real cos_theta. But we dont need -ve values
+	// this is the only thing that changes for Blinn_Phong
+	float cos_phi = max(0, dot(normal, frg_halfway_cam)); // also not strictly true
+
+
+	vec3 I_ambient = L_ambient;
+	vec3 I_diffuse = L_diffuse * cos_theta;
+	vec3 I_specular = L_specular * pow(cos_phi, L_exponent);
+
+	vec3 resultant = (I_ambient + I_diffuse  + I_specular) * frg_color;
+	// vec3 resultant = 0.5*normal + 0.5;
+	result = vec4(resultant, 1.0);
+}
